@@ -2,7 +2,7 @@
 
 import { Email, EmailStats } from '@/types/email';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Area } from 'recharts';
-import { Mail, Paperclip, TrendingUp, Users, Clock, Settings, Activity, Globe, BarChart3, TrendingDown } from 'lucide-react';
+import { Mail, Paperclip, TrendingUp, Users, Clock, Settings, Activity, Globe, BarChart3, TrendingDown, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import ChannelStatsPanel from './ChannelStatsPanel';
 
@@ -16,6 +16,8 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
   const [outOfHoursEnd, setOutOfHoursEnd] = useState('07:00');
   const [showTimeSettings, setShowTimeSettings] = useState(false);
   const [activeTimeRange, setActiveTimeRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [showOutOfHoursDetails, setShowOutOfHoursDetails] = useState(false);
+  const [showDuplicatesDetails, setShowDuplicatesDetails] = useState(false);
 
   const isOutOfHours = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -224,6 +226,25 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
           <div className="card-content">
             <div className="flex items-center">
               <div className="flex-shrink-0">
+                <Activity className="h-8 w-8 text-emerald-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">External Ratio</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.totalEmails > 0 ? ((stats.internalVsExternalRatio.external / stats.totalEmails) * 100).toFixed(1) : 0}%
+                </p>
+                <p className="text-xs text-gray-400">
+                  {stats.internalVsExternalRatio.external} external emails
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-content">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
                 <BarChart3 className="h-8 w-8 text-teal-600" />
               </div>
               <div className="ml-4">
@@ -241,25 +262,21 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
         </div>
       </div>
 
-      {/* Email Volume Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* Peak Times Heatmap */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Peak Traffic Times</h3>
-          </div>
-          <div className="card-content">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={peakTimesData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="hour" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#3b82f6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+      {/* Peak Times Heatmap - Full Width */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="text-lg font-semibold text-gray-900">Peak Traffic Times</h3>
+        </div>
+        <div className="card-content">
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={peakTimesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="count" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -283,6 +300,13 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
                   className="btn btn-ghost btn-sm p-2"
                 >
                   <Settings className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setShowOutOfHoursDetails(!showOutOfHoursDetails)}
+                  className="flex items-center space-x-1 text-gray-500 hover:text-gray-700"
+                >
+                  <span className="text-sm">Details</span>
+                  {showOutOfHoursDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -345,6 +369,34 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
                 <p className="text-sm text-gray-600">{outOfHoursData[1].percentage}%</p>
               </div>
             </div>
+
+            {showOutOfHoursDetails && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Detailed Breakdown</h4>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700">Peak Out of Hours</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {outOfHoursEmails.length > 0 ? 
+                          new Date(Math.max(...outOfHoursEmails.map(e => new Date(e.receivedDateTime).getTime()))).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+                          : 'N/A'
+                        }
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700">Avg per Day</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {(outOfHoursEmails.length / 7).toFixed(1)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Analysis based on current time settings: {outOfHoursStart} - {outOfHoursEnd}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           </div>
         </div>
@@ -453,13 +505,22 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
         <div className="card-header">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Duplicates Analysis</h3>
-            <select className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="all">All Channels</option>
-              <option value="bbc">BBC</option>
-              <option value="itv">ITV</option>
-              <option value="channel4">Channel 4</option>
-              <option value="channel5">Channel 5</option>
-            </select>
+            <div className="flex items-center space-x-2">
+              <select className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="all">All Channels</option>
+                <option value="bbc">BBC</option>
+                <option value="itv">ITV</option>
+                <option value="channel4">Channel 4</option>
+                <option value="channel5">Channel 5</option>
+              </select>
+              <button
+                onClick={() => setShowDuplicatesDetails(!showDuplicatesDetails)}
+                className="flex items-center space-x-1 text-gray-500 hover:text-gray-700"
+              >
+                <span className="text-sm">Details</span>
+                {showDuplicatesDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
         </div>
         <div className="card-content">
@@ -483,6 +544,37 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
               <div className="text-sm text-gray-600">Urgent Duplicates</div>
             </div>
           </div>
+
+          {showDuplicatesDetails && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Duplicate Detection Details</h4>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700">Reply Chains</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {emails.filter(email => email.subject.startsWith('Re:')).length}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700">Forward Chains</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {emails.filter(email => email.subject.includes('Fwd:') || email.subject.includes('FWD:')).length}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700">Auto-Detected</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {emails.filter(email => email.isDuplicate).length}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-500">
+                  Duplicates are detected based on subject similarity and sender patterns. Use the &ldquo;Show Duplicates&rdquo; filter to view them.
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

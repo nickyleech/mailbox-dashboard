@@ -23,7 +23,7 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
         </h2>
         <div className="mt-3 text-center">
           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            📧 TV.Schedule@pamediagroup.com
+            📧 Shared Mailbox Access
           </span>
         </div>
       </div>

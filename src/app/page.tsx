@@ -112,7 +112,7 @@ export default function Home() {
                 <h1 className="text-3xl font-bold text-gray-900">Mailbox Dashboard</h1>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    📧 TV.Schedule@pamediagroup.com
+                    📧 Shared Mailbox
                   </span>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function Home() {
                 <p className="text-sm text-red-800 font-medium">TV Schedule Email Access Error</p>
                 <p className="text-sm text-red-700 mt-1">{graphError}</p>
                 <p className="text-xs text-red-600 mt-2">
-                  This dashboard only works with TV Schedule emails. Please ensure you have access to TV.Schedule@pamediagroup.com
+                  This dashboard only works with TV Schedule emails. Please ensure you have access to the shared mailbox.
                 </p>
               </div>
             </div>

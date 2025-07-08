@@ -30,7 +30,7 @@ export default function HelpSection() {
           <div className="bg-blue-50 p-4 rounded-lg">
             <h4 className="font-semibold text-blue-900 mb-2">📺 What This Dashboard Does:</h4>
             <ul className="list-disc list-inside text-blue-800 space-y-1">
-              <li>Manages emails from <strong>TV.Schedule@pamediagroup.com</strong> shared mailbox</li>
+              <li>Manages emails from the shared mailbox</li>
               <li>Categorizes emails by TV supplier (BBC, ITV, Channel 4, etc.)</li>
               <li>Filters by TV channel and programme type</li>
               <li>Detects duplicate schedule updates</li>
@@ -61,7 +61,7 @@ export default function HelpSection() {
           <div className="bg-green-50 p-4 rounded-lg">
             <h4 className="font-semibold text-green-900 mb-2">📧 Shared Mailbox Access:</h4>
             <ul className="list-disc list-inside text-green-800 space-y-1">
-              <li>Connected to: <strong>TV.Schedule@pamediagroup.com</strong></li>
+              <li>Connected to the shared mailbox</li>
               <li>Requires delegate access permissions</li>
               <li>Automatically opens Outlook web interface after login</li>
               <li>Works alongside this dashboard for complete email management</li>
