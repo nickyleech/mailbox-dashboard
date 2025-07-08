@@ -14,7 +14,7 @@ import ExportPanel from '@/components/ExportPanel';
 import HelpSection from '@/components/HelpSection';
 import LoginComponent from '@/components/LoginComponent';
 import MailboxSelector from '@/components/MailboxSelector';
-import { Mail, BarChart3, Download, Filter, HelpCircle, RefreshCw, LogOut, User, AlertCircle } from 'lucide-react';
+import { Mail, BarChart3, Download, Filter, HelpCircle, RefreshCw, LogOut, User, AlertCircle, LogIn } from 'lucide-react';
 
 export default function Home() {
   const { isAuthenticated, user, logout, loading: authLoading } = useAuth();
@@ -58,9 +58,9 @@ export default function Home() {
   const emailStats = useMemo(() => calculateEmailStats(filteredEmails), [filteredEmails]);
   const availableChannels = useMemo(() => getUniqueChannels(emails), [emails]);
 
-  // Show login component if not authenticated
-  if (!isAuthenticated && !authLoading) {
-    return <LoginComponent />;
+  // Show login component if not authenticated and not using demo mode
+  if (!isAuthenticated && !authLoading && !useMockData) {
+    return <LoginComponent onDemoMode={() => setUseMockData(true)} />;
   }
 
   // Show loading state during authentication
@@ -97,49 +97,67 @@ export default function Home() {
                 {filteredEmails.length} of {emails.length} emails
               </div>
               
-              {/* Mailbox Selector */}
-              <MailboxSelector
-                selectedMailbox={selectedMailbox}
-                onMailboxChange={setSelectedMailbox}
-              />
+              {/* Mailbox Selector - only show if authenticated */}
+              {isAuthenticated && (
+                <MailboxSelector
+                  selectedMailbox={selectedMailbox}
+                  onMailboxChange={setSelectedMailbox}
+                />
+              )}
               
               {/* User info and controls */}
               <div className="flex items-center space-x-2">
-                <div className="text-sm text-gray-600">
-                  <User className="h-4 w-4 inline mr-1" />
-                  {user?.name || user?.username || 'User'}
-                </div>
+                {isAuthenticated && (
+                  <div className="text-sm text-gray-600">
+                    <User className="h-4 w-4 inline mr-1" />
+                    {user?.name || user?.username || 'User'}
+                  </div>
+                )}
                 
-                {/* Refresh button */}
-                <button
-                  onClick={refreshEmails}
-                  disabled={graphLoading}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50"
-                  title="Refresh emails"
-                >
-                  <RefreshCw className={`h-4 w-4 ${graphLoading ? 'animate-spin' : ''}`} />
-                </button>
+                {/* Refresh button - only show if authenticated and not in demo mode */}
+                {isAuthenticated && !useMockData && (
+                  <button
+                    onClick={refreshEmails}
+                    disabled={graphLoading}
+                    className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50"
+                    title="Refresh emails"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${graphLoading ? 'animate-spin' : ''}`} />
+                  </button>
+                )}
                 
-                {/* Toggle mock data */}
+                {/* Demo Mode Toggle */}
                 <button
                   onClick={() => setUseMockData(!useMockData)}
-                  className={`px-3 py-1 rounded-md text-xs font-medium ${
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     useMockData 
-                      ? 'bg-yellow-100 text-yellow-800' 
-                      : 'bg-green-100 text-green-800'
+                      ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                   }`}
+                  title={useMockData ? 'Currently viewing demo data' : 'Switch to demo mode'}
                 >
-                  {useMockData ? 'Mock Data' : 'Live Data'}
+                  {useMockData ? '🎯 Demo Mode' : '📊 Live Data'}
                 </button>
                 
-                {/* Logout button */}
-                <button
-                  onClick={logout}
-                  className="p-2 rounded-md text-gray-400 hover:text-gray-500"
-                  title="Sign out"
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
+                {/* Login/Logout button */}
+                {isAuthenticated ? (
+                  <button
+                    onClick={logout}
+                    className="p-2 rounded-md text-gray-400 hover:text-gray-500"
+                    title="Sign out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setUseMockData(false)}
+                    className="px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200"
+                    title="Sign in to access live data"
+                  >
+                    <LogIn className="h-4 w-4 inline mr-1" />
+                    Sign In
+                  </button>
+                )}
               </div>
               
               <button
@@ -179,6 +197,37 @@ export default function Home() {
           </nav>
         </div>
       </div>
+
+      {/* Demo Mode Banner */}
+      {useMockData && (
+        <div className="bg-blue-50 border-b border-blue-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    🎯
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-blue-900">
+                    Demo Mode Active
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    Viewing realistic TV schedule email data for demonstration purposes
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setUseMockData(false)}
+                className="text-blue-700 hover:text-blue-900 text-sm font-medium"
+              >
+                Switch to Live Data
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error Display */}
       {graphError && (

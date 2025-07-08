@@ -1,9 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, Mail, Shield, Users } from 'lucide-react';
+import { LogIn, Mail, Shield, Users, Play } from 'lucide-react';
 
-export default function LoginComponent() {
+interface LoginComponentProps {
+  onDemoMode?: () => void;
+}
+
+export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
   const { login, loading, error, clearError } = useAuth();
 
   const handleLogin = async () => {
@@ -74,7 +78,7 @@ export default function LoginComponent() {
               </div>
             </div>
 
-            <div>
+            <div className="space-y-3">
               <button
                 onClick={handleLogin}
                 disabled={loading}
@@ -92,6 +96,29 @@ export default function LoginComponent() {
                   </div>
                 )}
               </button>
+              
+              {onDemoMode && (
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">or</span>
+                  </div>
+                </div>
+              )}
+              
+              {onDemoMode && (
+                <button
+                  onClick={onDemoMode}
+                  className="w-full flex justify-center py-2 px-4 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <div className="flex items-center">
+                    <Play className="h-4 w-4 mr-2" />
+                    🎯 Try Demo Mode
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>
