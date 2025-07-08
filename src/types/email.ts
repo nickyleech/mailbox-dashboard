@@ -12,6 +12,7 @@ export interface Email {
   attachments?: Attachment[];
   isRead?: boolean;
   isFlagged?: boolean;
+  isDuplicate?: boolean;
 }
 
 export interface Attachment {
@@ -31,6 +32,8 @@ export interface EmailFilter {
     end: string;
   };
   categories?: string[];
+  timeFilter?: 'last30min' | 'last1hour' | 'last3hours' | 'last6hours' | 'last12hours' | 'last24hours';
+  showDuplicatesOnly?: boolean;
 }
 
 export interface SearchOptions {

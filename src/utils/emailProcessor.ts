@@ -1,5 +1,45 @@
 import { Email, EmailFilter, SearchOptions, EmailStats } from '@/types/email';
 
+// Function to detect duplicates and mark them
+export function detectDuplicates(emails: Email[]): Email[] {
+  const processedEmails = emails.map(email => ({ ...email, isDuplicate: false }));
+  
+  // Create a map to track similar emails
+  const similarityMap = new Map<string, Email[]>();
+  
+  processedEmails.forEach(email => {
+    // Create a similarity key based on subject and sender
+    const normalizedSubject = email.subject
+      .toLowerCase()
+      .replace(/^(re:|fwd?:|fw:)\s*/i, '') // Remove reply/forward prefixes
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+    
+    const similarityKey = `${email.from}-${normalizedSubject}`;
+    
+    if (!similarityMap.has(similarityKey)) {
+      similarityMap.set(similarityKey, []);
+    }
+    
+    similarityMap.get(similarityKey)!.push(email);
+  });
+  
+  // Mark duplicates (keep the first email, mark others as duplicates)
+  similarityMap.forEach(similarEmails => {
+    if (similarEmails.length > 1) {
+      // Sort by received date to keep the earliest
+      similarEmails.sort((a, b) => new Date(a.receivedDateTime).getTime() - new Date(b.receivedDateTime).getTime());
+      
+      // Mark all except the first as duplicates
+      for (let i = 1; i < similarEmails.length; i++) {
+        similarEmails[i].isDuplicate = true;
+      }
+    }
+  });
+  
+  return processedEmails;
+}
+
 export function filterEmails(emails: Email[], filters: EmailFilter): Email[] {
   return emails.filter(email => {
     // Supplier filter
@@ -38,6 +78,42 @@ export function filterEmails(emails: Email[], filters: EmailFilter): Email[] {
         email.categories.includes(category)
       );
       if (!hasMatchingCategory) return false;
+    }
+
+    // Time filter
+    if (filters.timeFilter) {
+      const now = new Date();
+      const emailDate = new Date(email.receivedDateTime);
+      let minutesAgo = 0;
+
+      switch (filters.timeFilter) {
+        case 'last30min':
+          minutesAgo = 30;
+          break;
+        case 'last1hour':
+          minutesAgo = 60;
+          break;
+        case 'last3hours':
+          minutesAgo = 180;
+          break;
+        case 'last6hours':
+          minutesAgo = 360;
+          break;
+        case 'last12hours':
+          minutesAgo = 720;
+          break;
+        case 'last24hours':
+          minutesAgo = 1440;
+          break;
+      }
+
+      const cutoffTime = new Date(now.getTime() - minutesAgo * 60 * 1000);
+      if (emailDate < cutoffTime) return false;
+    }
+
+    // Duplicates filter
+    if (filters.showDuplicatesOnly && !email.isDuplicate) {
+      return false;
     }
 
     return true;

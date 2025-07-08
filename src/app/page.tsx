@@ -3,19 +3,20 @@
 import { useState, useMemo } from 'react';
 import { mockEmails } from '@/data/mockEmails';
 import { EmailFilter, SearchOptions } from '@/types/email';
-import { filterEmails, searchEmails, calculateEmailStats, getUniqueChannels } from '@/utils/emailProcessor';
+import { filterEmails, searchEmails, calculateEmailStats, getUniqueChannels, detectDuplicates } from '@/utils/emailProcessor';
 import EmailList from '@/components/EmailList';
 import FilterPanel from '@/components/FilterPanel';
 import SearchBar from '@/components/SearchBar';
 import Dashboard from '@/components/Dashboard';
 import ExportPanel from '@/components/ExportPanel';
-import { Mail, BarChart3, Download, Filter } from 'lucide-react';
+import HelpSection from '@/components/HelpSection';
+import { Mail, BarChart3, Download, Filter, HelpCircle } from 'lucide-react';
 
 export default function Home() {
-  const [emails] = useState(mockEmails);
+  const [emails] = useState(detectDuplicates(mockEmails));
   const [filters, setFilters] = useState<EmailFilter>({});
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({ query: '', fields: ['subject', 'from'] });
-  const [activeTab, setActiveTab] = useState<'emails' | 'dashboard' | 'export'>('emails');
+  const [activeTab, setActiveTab] = useState<'emails' | 'dashboard' | 'export' | 'help'>('emails');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const filteredEmails = useMemo(() => {
@@ -30,7 +31,8 @@ export default function Home() {
   const tabs = [
     { id: 'emails', label: 'Emails', icon: Mail, count: filteredEmails.length },
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'export', label: 'Export', icon: Download }
+    { id: 'export', label: 'Export', icon: Download },
+    { id: 'help', label: 'Help', icon: HelpCircle }
   ];
 
   return (
@@ -40,8 +42,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Email Dashboard</h1>
-              <p className="text-gray-600">Manage your TV channel emails efficiently</p>
+              <h1 className="text-2xl font-bold text-gray-900">Manage your TV Schedule emails efficiently</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
@@ -65,7 +66,7 @@ export default function Home() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'emails' | 'dashboard' | 'export')}
+                onClick={() => setActiveTab(tab.id as 'emails' | 'dashboard' | 'export' | 'help')}
                 className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -89,19 +90,21 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
-          <div className={`lg:col-span-1 space-y-6 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
-            <SearchBar onSearch={setSearchOptions} />
-            <FilterPanel
-              filters={filters}
-              onFiltersChange={setFilters}
-              availableChannels={availableChannels}
-              isOpen={true}
-              onToggle={() => {}}
-            />
-          </div>
+          {activeTab !== 'help' && (
+            <div className={`lg:col-span-1 space-y-6 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
+              <SearchBar onSearch={setSearchOptions} />
+              <FilterPanel
+                filters={filters}
+                onFiltersChange={setFilters}
+                availableChannels={availableChannels}
+                isOpen={true}
+                onToggle={() => {}}
+              />
+            </div>
+          )}
 
           {/* Main Content Area */}
-          <div className="lg:col-span-3">
+          <div className={`${activeTab === 'help' ? 'lg:col-span-4' : 'lg:col-span-3'}`}>
             {activeTab === 'emails' && (
               <EmailList
                 emails={filteredEmails}
@@ -115,6 +118,10 @@ export default function Home() {
 
             {activeTab === 'export' && (
               <ExportPanel emails={emails} filteredEmails={filteredEmails} />
+            )}
+
+            {activeTab === 'help' && (
+              <HelpSection />
             )}
           </div>
         </div>

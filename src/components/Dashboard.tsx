@@ -1,26 +1,65 @@
 'use client';
 
 import { Email, EmailStats } from '@/types/email';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Mail, Paperclip, TrendingUp, Users } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Mail, Paperclip, TrendingUp, Users, Clock, Settings } from 'lucide-react';
+import { useState } from 'react';
 
 interface DashboardProps {
   emails: Email[];
   stats: EmailStats;
 }
 
-export default function Dashboard({ stats }: DashboardProps) {
-  const supplierData = Object.entries(stats.supplierDistribution).map(([supplier, count]) => ({
-    name: supplier,
-    value: count,
-    percentage: ((count / stats.totalEmails) * 100).toFixed(1)
-  }));
+export default function Dashboard({ emails, stats }: DashboardProps) {
+  const [outOfHoursStart, setOutOfHoursStart] = useState('17:00');
+  const [outOfHoursEnd, setOutOfHoursEnd] = useState('07:00');
+  const [showTimeSettings, setShowTimeSettings] = useState(false);
 
-  const typeData = Object.entries(stats.typeDistribution).map(([type, count]) => ({
-    name: type.charAt(0).toUpperCase() + type.slice(1),
-    value: count,
-    percentage: ((count / stats.totalEmails) * 100).toFixed(1)
-  }));
+  const isOutOfHours = (dateTime: string) => {
+    const date = new Date(dateTime);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const timeValue = hours * 100 + minutes;
+    
+    const [startHour, startMin] = outOfHoursStart.split(':').map(Number);
+    const [endHour, endMin] = outOfHoursEnd.split(':').map(Number);
+    const startTime = startHour * 100 + startMin;
+    const endTime = endHour * 100 + endMin;
+    
+    if (startTime > endTime) {
+      return timeValue >= startTime || timeValue <= endTime;
+    }
+    return timeValue >= startTime && timeValue <= endTime;
+  };
+
+  const outOfHoursEmails = emails.filter(email => isOutOfHours(email.receivedDateTime));
+  const businessHoursEmails = emails.filter(email => !isOutOfHours(email.receivedDateTime));
+
+  const outOfHoursData = [
+    {
+      name: 'Business Hours',
+      value: businessHoursEmails.length,
+      percentage: ((businessHoursEmails.length / stats.totalEmails) * 100).toFixed(1)
+    },
+    {
+      name: 'Out of Hours',
+      value: outOfHoursEmails.length,
+      percentage: ((outOfHoursEmails.length / stats.totalEmails) * 100).toFixed(1)
+    }
+  ];
+
+  const hourlyBreakdown = Array.from({ length: 24 }, (_, hour) => {
+    const count = outOfHoursEmails.filter(email => {
+      const emailHour = new Date(email.receivedDateTime).getHours();
+      return emailHour === hour;
+    }).length;
+    
+    return {
+      hour: hour.toString().padStart(2, '0') + ':00',
+      count,
+      isOutOfHours: isOutOfHours(`2024-01-01T${hour.toString().padStart(2, '0')}:00:00`)
+    };
+  });
 
   const dailyVolumeData = stats.dailyVolume.map(item => ({
     date: new Date(item.date).toLocaleDateString('en-GB', { 
@@ -31,21 +70,6 @@ export default function Dashboard({ stats }: DashboardProps) {
     emails: item.count
   }));
 
-  const COLORS = ['#3B82F6', '#EF4444', '#8B5CF6', '#10B981', '#F59E0B', '#6B7280'];
-
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; payload: { percentage: string } }>; label?: string }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-md">
-          <p className="font-medium">{label}</p>
-          <p className="text-blue-600">
-            {`${payload[0].value} emails (${payload[0].payload.percentage}%)`}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="space-y-6">
@@ -102,42 +126,93 @@ export default function Dashboard({ stats }: DashboardProps) {
         </div>
       </div>
 
-      {/* Charts Grid */}
+      {/* Out of Hours Email Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Supplier Distribution */}
+        {/* Out of Hours Overview */}
         <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Supplier Distribution</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={supplierData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percentage }) => `${name} ${percentage}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {supplierData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-gray-900">Out of Hours Email Analysis</h3>
+            <button
+              onClick={() => setShowTimeSettings(!showTimeSettings)}
+              className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
+          </div>
+          
+          {showTimeSettings && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Out of Hours Start
+                  </label>
+                  <input
+                    type="time"
+                    value={outOfHoursStart}
+                    onChange={(e) => setOutOfHoursStart(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Out of Hours End
+                  </label>
+                  <input
+                    type="time"
+                    value={outOfHoursEnd}
+                    onChange={(e) => setOutOfHoursEnd(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center">
+                <Clock className="h-8 w-8 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Business Hours</p>
+                  <p className="text-xs text-gray-500">{outOfHoursEnd} - {outOfHoursStart}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-blue-600">{businessHoursEmails.length}</p>
+                <p className="text-sm text-gray-600">{outOfHoursData[0].percentage}%</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+              <div className="flex items-center">
+                <Clock className="h-8 w-8 text-red-600 mr-3" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Out of Hours</p>
+                  <p className="text-xs text-gray-500">{outOfHoursStart} - {outOfHoursEnd}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-red-600">{outOfHoursEmails.length}</p>
+                <p className="text-sm text-gray-600">{outOfHoursData[1].percentage}%</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Email Type Distribution */}
+        {/* Hourly Breakdown */}
         <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Email Type Distribution</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Hourly Email Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={typeData}>
+            <BarChart data={hourlyBreakdown}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="hour" />
               <YAxis />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" fill="#3B82F6" />
+              <Tooltip />
+              <Bar 
+                dataKey="count" 
+                fill="#3B82F6"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -157,47 +232,25 @@ export default function Dashboard({ stats }: DashboardProps) {
         </ResponsiveContainer>
       </div>
 
-      {/* Detailed Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Supplier Breakdown</h3>
-          <div className="space-y-3">
-            {supplierData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-3"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="text-sm text-gray-600">{item.name}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-medium text-gray-900">{item.value}</span>
-                  <span className="text-xs text-gray-500 ml-2">({item.percentage}%)</span>
-                </div>
-              </div>
-            ))}
+      {/* Out of Hours Details */}
+      <div className="bg-white p-6 rounded-lg shadow-sm">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Out of Hours Email Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-red-600">{outOfHoursEmails.length}</div>
+            <div className="text-sm text-gray-600">Total Out of Hours</div>
           </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Email Type Breakdown</h3>
-          <div className="space-y-3">
-            {typeData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-3"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="text-sm text-gray-600">{item.name}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-medium text-gray-900">{item.value}</span>
-                  <span className="text-xs text-gray-500 ml-2">({item.percentage}%)</span>
-                </div>
-              </div>
-            ))}
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600">
+              {outOfHoursEmails.length > 0 ? Math.round((outOfHoursEmails.length / stats.totalEmails) * 100) : 0}%
+            </div>
+            <div className="text-sm text-gray-600">Percentage of Total</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-gray-900">
+              {outOfHoursEmails.length > 0 ? Math.round(outOfHoursEmails.length / Math.max(stats.dailyVolume.length, 1)) : 0}
+            </div>
+            <div className="text-sm text-gray-600">Average per Day</div>
           </div>
         </div>
       </div>

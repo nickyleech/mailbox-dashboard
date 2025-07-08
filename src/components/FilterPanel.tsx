@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { EmailFilter } from '@/types/email';
 import { supplierConfig, typeConfig } from '@/data/mockEmails';
-import { Filter, X, Calendar, Paperclip } from 'lucide-react';
+import { Filter, X, Calendar, Paperclip, Clock, Copy } from 'lucide-react';
+import SearchableDropdown from './SearchableDropdown';
 
 interface FilterPanelProps {
   filters: EmailFilter;
@@ -92,18 +93,12 @@ export default function FilterPanel({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Channel
             </label>
-            <select
+            <SearchableDropdown
+              options={availableChannels}
               value={localFilters.channel || ''}
-              onChange={(e) => handleFilterChange('channel', e.target.value || undefined)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All channels</option>
-              {availableChannels.map((channel) => (
-                <option key={channel} value={channel}>
-                  {channel}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => handleFilterChange('channel', value || undefined)}
+              emptyText="All channels"
+            />
           </div>
 
           {/* Type Filter */}
@@ -125,6 +120,27 @@ export default function FilterPanel({
             </select>
           </div>
 
+          {/* Time Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock className="inline h-4 w-4 mr-1" />
+              Time Range
+            </label>
+            <select
+              value={localFilters.timeFilter || ''}
+              onChange={(e) => handleFilterChange('timeFilter', e.target.value || undefined)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All time</option>
+              <option value="last30min">Last 30 minutes</option>
+              <option value="last1hour">Last 1 hour</option>
+              <option value="last3hours">Last 3 hours</option>
+              <option value="last6hours">Last 6 hours</option>
+              <option value="last12hours">Last 12 hours</option>
+              <option value="last24hours">Last 24 hours</option>
+            </select>
+          </div>
+
           {/* Attachments Filter */}
           <div>
             <label className="flex items-center space-x-2">
@@ -136,6 +152,20 @@ export default function FilterPanel({
               />
               <Paperclip className="h-4 w-4 text-gray-400" />
               <span className="text-sm text-gray-700">Has attachments only</span>
+            </label>
+          </div>
+
+          {/* Duplicates Filter */}
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={localFilters.showDuplicatesOnly === true}
+                onChange={(e) => handleFilterChange('showDuplicatesOnly', e.target.checked || undefined)}
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              />
+              <Copy className="h-4 w-4 text-orange-400" />
+              <span className="text-sm text-gray-700">Show duplicates only</span>
             </label>
           </div>
 

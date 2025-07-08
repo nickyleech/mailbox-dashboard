@@ -1,6 +1,58 @@
 import { Email } from '@/types/email';
 
+const now = new Date();
+const thirtyMinAgo = new Date(now.getTime() - 30 * 60 * 1000);
+const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+
 export const mockEmails: Email[] = [
+  {
+    id: 'msg_recent_001',
+    subject: 'URGENT: BBC One Schedule Change - Tonight',
+    from: 'urgent@bbc.co.uk',
+    supplier: 'BBC',
+    channel: 'BBC One',
+    type: 'update',
+    hasAttachments: false,
+    receivedDateTime: thirtyMinAgo.toISOString(),
+    categories: ['Schedule Update', 'BBC'],
+    isRead: false,
+    isFlagged: true
+  },
+  {
+    id: 'msg_recent_002',
+    subject: 'ITV News Flash - Breaking Story',
+    from: 'newsflash@itv.com',
+    supplier: 'ITV',
+    channel: 'ITV1',
+    type: 'press',
+    hasAttachments: true,
+    receivedDateTime: oneHourAgo.toISOString(),
+    categories: ['Press Release', 'ITV'],
+    isRead: false,
+    isFlagged: false,
+    attachments: [
+      {
+        id: 'att_recent_001',
+        name: 'Breaking_News_Statement.pdf',
+        contentType: 'application/pdf',
+        size: 1024000
+      }
+    ]
+  },
+  {
+    id: 'msg_recent_003',
+    subject: 'Channel 4 Programming Update',
+    from: 'programming@channel4.com',
+    supplier: 'Channel 4',
+    channel: 'Channel 4',
+    type: 'update',
+    hasAttachments: false,
+    receivedDateTime: threeHoursAgo.toISOString(),
+    categories: ['Schedule Update', 'Channel 4'],
+    isRead: true,
+    isFlagged: false
+  },
   {
     id: 'msg_001',
     subject: 'BBC One Schedule - Week 28',
@@ -186,6 +238,67 @@ export const mockEmails: Email[] = [
         size: 1572864
       }
     ]
+  },
+  // Duplicate emails for testing
+  {
+    id: 'msg_dup_001',
+    subject: 'BBC One Schedule - Week 28',
+    from: 'schedules@bbc.co.uk',
+    supplier: 'BBC',
+    channel: 'BBC One',
+    type: 'schedule',
+    hasAttachments: true,
+    receivedDateTime: '2025-07-08T09:15:00Z',
+    categories: ['TV Schedule', 'BBC'],
+    isRead: false,
+    isFlagged: false,
+    attachments: [
+      {
+        id: 'att_dup_001',
+        name: 'BBC_One_Schedule_Week28_v2.pdf',
+        contentType: 'application/pdf',
+        size: 2100000
+      }
+    ]
+  },
+  {
+    id: 'msg_dup_002',
+    subject: 'Re: BBC One Schedule - Week 28',
+    from: 'schedules@bbc.co.uk',
+    supplier: 'BBC',
+    channel: 'BBC One',
+    type: 'schedule',
+    hasAttachments: false,
+    receivedDateTime: '2025-07-08T09:30:00Z',
+    categories: ['TV Schedule', 'BBC'],
+    isRead: false,
+    isFlagged: false
+  },
+  {
+    id: 'msg_dup_003',
+    subject: 'ITV Schedule Update - Tonight\'s Programming',
+    from: 'updates@itv.com',
+    supplier: 'ITV',
+    channel: 'ITV1',
+    type: 'update',
+    hasAttachments: false,
+    receivedDateTime: '2025-07-08T14:45:00Z',
+    categories: ['Schedule Update', 'ITV'],
+    isRead: false,
+    isFlagged: false
+  },
+  {
+    id: 'msg_dup_004',
+    subject: 'URGENT: BBC One Schedule Change - Tonight',
+    from: 'urgent@bbc.co.uk',
+    supplier: 'BBC',
+    channel: 'BBC One',
+    type: 'update',
+    hasAttachments: false,
+    receivedDateTime: new Date(now.getTime() - 25 * 60 * 1000).toISOString(),
+    categories: ['Schedule Update', 'BBC'],
+    isRead: false,
+    isFlagged: true
   }
 ];
 

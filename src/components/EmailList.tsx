@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Email, SortField, SortOrder } from '@/types/email';
 import { supplierConfig, typeConfig } from '@/data/mockEmails';
-import { ChevronDown, ChevronUp, Paperclip, Flag, Mail, MailOpen } from 'lucide-react';
+import { ChevronDown, ChevronUp, Paperclip, Flag, Mail, MailOpen, Download, Forward, Copy } from 'lucide-react';
 
 interface EmailListProps {
   emails: Email[];
@@ -71,6 +71,41 @@ export default function EmailList({ emails, onEmailClick }: EmailListProps) {
     });
   };
 
+  const handleDownloadAttachment = (attachment: { id: string; name: string; contentType: string; size: number }, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const blob = new Blob([`Mock attachment: ${attachment.name}`], { type: attachment.contentType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = attachment.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleForwardEmail = (email: Email, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const subject = encodeURIComponent(`Fwd: ${email.subject}`);
+    const body = encodeURIComponent(`
+---------- Forwarded message ----------
+From: ${email.from}
+Date: ${formatDate(email.receivedDateTime)}
+Subject: ${email.subject}
+
+${email.body || 'Email content not available'}
+    `);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
 
   const SortHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <th 
@@ -115,7 +150,7 @@ export default function EmailList({ emails, onEmailClick }: EmailListProps) {
             {sortedEmails.map((email) => (
               <tr 
                 key={email.id}
-                className={`hover:bg-gray-50 cursor-pointer ${!email.isRead ? 'bg-blue-50' : ''}`}
+                className={`hover:bg-gray-50 cursor-pointer ${!email.isRead ? 'bg-blue-50' : ''} ${email.isDuplicate ? 'bg-orange-50 border-l-4 border-orange-400' : ''}`}
                 onClick={() => onEmailClick?.(email)}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -127,6 +162,11 @@ export default function EmailList({ emails, onEmailClick }: EmailListProps) {
                     )}
                     {email.isFlagged && (
                       <Flag className="h-4 w-4 text-red-500" />
+                    )}
+                    {email.isDuplicate && (
+                      <div title="Duplicate email">
+                        <Copy className="h-4 w-4 text-orange-500" />
+                      </div>
                     )}
                   </div>
                 </td>
@@ -157,11 +197,27 @@ export default function EmailList({ emails, onEmailClick }: EmailListProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {email.hasAttachments && (
-                    <div className="flex items-center space-x-1">
-                      <Paperclip className="h-4 w-4 text-gray-400" />
-                      <span className="text-xs text-gray-500">
-                        {email.attachments?.length || 1}
-                      </span>
+                    <div className="space-y-1">
+                      {email.attachments?.map((attachment) => (
+                        <div key={attachment.id} className="flex items-center space-x-2">
+                          <button
+                            onClick={(e) => handleDownloadAttachment(attachment, e)}
+                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-900 text-xs"
+                            title={`Download ${attachment.name}`}
+                          >
+                            <Download className="h-3 w-3" />
+                            <span className="truncate max-w-24">{attachment.name}</span>
+                          </button>
+                          <span className="text-xs text-gray-400">
+                            ({formatFileSize(attachment.size)})
+                          </span>
+                        </div>
+                      )) || (
+                        <div className="flex items-center space-x-1">
+                          <Paperclip className="h-4 w-4 text-gray-400" />
+                          <span className="text-xs text-gray-500">1</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </td>
@@ -169,12 +225,22 @@ export default function EmailList({ emails, onEmailClick }: EmailListProps) {
                   {formatDate(email.receivedDateTime)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">
-                    View
-                  </button>
-                  <button className="text-gray-600 hover:text-gray-900">
-                    Archive
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button className="text-blue-600 hover:text-blue-900">
+                      View
+                    </button>
+                    <button 
+                      onClick={(e) => handleForwardEmail(email, e)}
+                      className="text-green-600 hover:text-green-900 flex items-center space-x-1"
+                      title="Forward email"
+                    >
+                      <Forward className="h-4 w-4" />
+                      <span>Forward</span>
+                    </button>
+                    <button className="text-gray-600 hover:text-gray-900">
+                      Archive
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
