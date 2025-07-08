@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { mockEmails } from '@/data/mockEmails';
 import { Email, EmailFilter, SearchOptions } from '@/types/email';
-import { calculateEmailStats, getUniqueChannels } from '@/utils/emailProcessor';
+import { calculateEmailStats, getUniqueChannels, filterEmails, searchEmails, detectDuplicates } from '@/utils/emailProcessor';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGraphEmails } from '@/hooks/useGraphEmails';
 import EmailList from '@/components/EmailList';
@@ -44,17 +44,31 @@ export default function Home() {
   // Fallback to mock data if needed
   const emails = useMemo(() => {
     if (!isAuthenticated || useMockData) {
-      return mockEmails;
+      // Apply duplicate detection to mock data as well
+      return detectDuplicates(mockEmails);
     }
     return graphEmails;
   }, [isAuthenticated, useMockData, graphEmails]);
 
   const filteredEmails = useMemo(() => {
     if (!isAuthenticated || useMockData) {
-      return mockEmails;
+      // Apply filters to mock data as well
+      let result = emails;
+      
+      // Apply filters
+      if (Object.keys(filters).length > 0) {
+        result = filterEmails(result, filters);
+      }
+
+      // Apply search
+      if (searchOptions.query.trim()) {
+        result = searchEmails(result, searchOptions);
+      }
+
+      return result;
     }
     return graphFilteredEmails;
-  }, [isAuthenticated, useMockData, graphFilteredEmails]);
+  }, [isAuthenticated, useMockData, graphFilteredEmails, filters, searchOptions, emails]);
 
   const emailStats = useMemo(() => calculateEmailStats(filteredEmails), [filteredEmails]);
   const availableChannels = useMemo(() => getUniqueChannels(emails), [emails]);

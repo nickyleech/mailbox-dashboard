@@ -19,7 +19,7 @@ export const realMockEmails: Email[] = [
     type: 'schedule',
     hasAttachments: false,
     receivedDateTime: thirtyMinAgo.toISOString(),
-    categories: ['Schedule', 'BBC'],
+    categories: ['TV Schedule'],
     isRead: false,
     isFlagged: true,
     body: 'For the latest updates from across the BBC read What\'s Occurring? on LinkedIn\n\nBBC ONE SCOTLAND\nProgramme Information\n\n• Scotland\'s Home of the Year – The Final, Ep7\n\nBBC SCOTLAND\nProgramme Information\n\n• Lockerbie: Our Story'
@@ -33,7 +33,7 @@ export const realMockEmails: Email[] = [
     type: 'technical',
     hasAttachments: false,
     receivedDateTime: oneHourAgo.toISOString(),
-    categories: ['EPG', 'Colors'],
+    categories: ['Other'],
     isRead: false,
     isFlagged: false,
     body: 'Hi,\n\nPlease find the latest schedules for the following channel(s)\nColors Cineplex Europe (Channel ID 8725)\nEPG has been generated for 05/01/25 00:00:00 to 06/01/25 00:00:00\n\nProduct ID 62926\nCust Code vmpl_fm1\nRegards'
@@ -47,7 +47,7 @@ export const realMockEmails: Email[] = [
     type: 'schedule',
     hasAttachments: true,
     receivedDateTime: twoHoursAgo.toISOString(),
-    categories: ['Schedule', 'Absolute Radio'],
+    categories: ['TV Schedule'],
     isRead: true,
     isFlagged: false,
     body: 'Hi there,\n\nPlease find the full Absolute Radio schedule for June attached.\n\nBest,\nRicky',
@@ -69,7 +69,7 @@ export const realMockEmails: Email[] = [
     type: 'schedule',
     hasAttachments: false,
     receivedDateTime: threeHoursAgo.toISOString(),
-    categories: ['Schedule', 'BBC World Service'],
+    categories: ['TV Schedule'],
     isRead: false,
     isFlagged: false,
     body: 'BBC World Service UK Schedule\n15 Jun 2025\n\nWe welcome your feedback at presslistings@bbc.co.uk\n\n06:00-06:06\nBBC News\n\nThe latest five minute news bulletin from BBC World Service.\n\nRepeat No\nRelease Date 2025-06-15\nBrand Title BBC News'
@@ -83,7 +83,7 @@ export const realMockEmails: Email[] = [
     type: 'schedule',
     hasAttachments: false,
     receivedDateTime: threeHoursAgo.toISOString(),
-    categories: ['Schedule', 'BBC World Service'],
+    categories: ['TV Schedule'],
     isRead: false,
     isFlagged: false,
     body: 'BBC World Service UK Schedule\n16 Jun 2025\n\nWe welcome your feedback at presslistings@bbc.co.uk\n\n06:00-06:06\nBBC News\n\nThe latest five minute news bulletin from BBC World Service.\n\nRepeat No\nRelease Date 2025-06-16\nBrand Title BBC News'
@@ -97,7 +97,7 @@ export const realMockEmails: Email[] = [
     type: 'update',
     hasAttachments: false,
     receivedDateTime: sixHoursAgo.toISOString(),
-    categories: ['Update', 'BBC Alba'],
+    categories: ['Update'],
     isRead: true,
     isFlagged: true,
     body: 'Mon 26th @ 2200 & Thur 29th @ 2230 – Eorpa Billing added\n\nWed 28/05\n2300 – Ratharsair SAGR671Y/01 has been deleted and replaced by Mu Chriochan Hoil (Derick Thomson @ 100) SAGS052F/01\n\nMaggie\n\nMaggie Taylor\nHead of Publishing\nMG ALBA'
@@ -111,7 +111,7 @@ export const realMockEmails: Email[] = [
     type: 'update',
     hasAttachments: false,
     receivedDateTime: sixHoursAgo.toISOString(),
-    categories: ['Update', 'BBC Alba'],
+    categories: ['Update'],
     isRead: true,
     isFlagged: false,
     isDuplicate: true,
@@ -126,7 +126,7 @@ export const realMockEmails: Email[] = [
     type: 'update',
     hasAttachments: false,
     receivedDateTime: twelveHoursAgo.toISOString(),
-    categories: ['Update', 'BBC Parliament'],
+    categories: ['Update'],
     isRead: true,
     isFlagged: false,
     body: 'Updates in red\n\nBBC Parliament\n\nWednesday 21 May\n\n06:30 Treasury Questions\nCoverage of questions in the House of Commons to Rachel Reeves, the chancellor of the exchequer, and her team of ministers on Tuesday 20 May.\nNPAH568H/02 (R)'
@@ -140,7 +140,7 @@ export const realMockEmails: Email[] = [
     type: 'technical',
     hasAttachments: false,
     receivedDateTime: oneDayAgo.toISOString(),
-    categories: ['Technical', 'MTV'],
+    categories: ['Other'],
     isRead: true,
     isFlagged: false,
     body: 'MTV 80s. was emailed to TASC'
@@ -154,9 +154,46 @@ export const realMockEmails: Email[] = [
     type: 'update',
     hasAttachments: false,
     receivedDateTime: oneDayAgo.toISOString(),
-    categories: ['Update', 'BBC Scotland'],
+    categories: ['Update'],
     isRead: true,
     isFlagged: false,
     body: 'Please note:\n\nWednesday 21st May – BBC Scotland\n\n2100 Debate Night BILLING UPDATED\n\nDebate Night is coming from Dumfries with a studio audience putting questions to Emma Harper MSP from the SNP, Rachael Hamilton MSP from the Conservatives'
+  },
+  {
+    id: 'msg_011',
+    subject: 'ITV Press Release: New Drama Series Announcement',
+    from: 'press.office@itv.com',
+    supplier: 'ITV',
+    channel: 'ITV1',
+    type: 'press',
+    hasAttachments: true,
+    receivedDateTime: new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString(),
+    categories: ['Press Release'],
+    isRead: false,
+    isFlagged: false,
+    body: 'FOR IMMEDIATE RELEASE\n\nITV announces new Sunday night drama series "The Inspector" starring Benedict Cumberbatch.\n\nThe six-part series will premiere this autumn on ITV1 and ITVX.',
+    attachments: [
+      {
+        id: 'att_002',
+        name: 'ITV_Press_Release_The_Inspector.pdf',
+        contentType: 'application/pdf',
+        size: 1024000
+      }
+    ]
+  },
+  {
+    id: 'msg_012',
+    subject: 'Re: EXTERNAL:- BBC Week 22 - Saturday 31st May - Friday 6th June 2025',
+    from: 'pressofficescotland@bbc.co.uk',
+    supplier: 'BBC',
+    channel: 'BBC One Scotland',
+    type: 'schedule',
+    hasAttachments: false,
+    receivedDateTime: new Date(now.getTime() - 5 * 60 * 1000).toISOString(),
+    categories: ['TV Schedule'],
+    isRead: false,
+    isFlagged: false,
+    body: 'This is a duplicate of the earlier email about BBC Week 22 schedule.',
+    isDuplicate: false
   }
 ];
