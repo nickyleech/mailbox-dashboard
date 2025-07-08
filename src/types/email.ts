@@ -4,7 +4,7 @@ export interface Email {
   from: string;
   supplier: string;
   channel: string;
-  type: 'schedule' | 'update' | 'press' | 'technical' | 'marketing';
+  type: 'TV Schedule' | 'Update' | 'Press Release' | 'Other';
   hasAttachments: boolean;
   receivedDateTime: string;
   categories: string[];

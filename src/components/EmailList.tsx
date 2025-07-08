@@ -28,7 +28,7 @@ export default function EmailList({ emails, onEmailClick, loading = false }: Ema
   const [columns, setColumns] = useState<Column[]>([
     { key: 'received', label: 'Received', sortField: 'receivedDateTime', visible: true },
     { key: 'channel', label: 'Channel', sortField: 'channel', visible: true },
-    { key: 'type', label: 'Type', visible: true },
+    { key: 'type', label: 'Categories', visible: true },
     { key: 'subject', label: 'Subject', sortField: 'subject', visible: true },
     { key: 'from', label: 'From', sortField: 'from', visible: true },
     { key: 'attachments', label: 'Attachments', visible: true }

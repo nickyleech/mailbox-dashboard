@@ -52,24 +52,20 @@ export const supplierConfig = {
 };
 
 export const typeConfig = {
-  'schedule': {
+  'TV Schedule': {
     color: 'bg-blue-100 text-blue-800',
-    label: 'Schedule'
+    label: 'TV Schedule'
   },
-  'update': {
+  'Update': {
     color: 'bg-orange-100 text-orange-800',
     label: 'Update'
   },
-  'press': {
+  'Press Release': {
     color: 'bg-green-100 text-green-800',
-    label: 'Press'
+    label: 'Press Release'
   },
-  'technical': {
+  'Other': {
     color: 'bg-gray-100 text-gray-800',
-    label: 'Technical'
-  },
-  'marketing': {
-    color: 'bg-purple-100 text-purple-800',
-    label: 'Marketing'
+    label: 'Other'
   }
 };
