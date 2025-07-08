@@ -3,30 +3,74 @@
 import { useState, useMemo } from 'react';
 import { mockEmails } from '@/data/mockEmails';
 import { EmailFilter, SearchOptions } from '@/types/email';
-import { filterEmails, searchEmails, calculateEmailStats, getUniqueChannels, detectDuplicates } from '@/utils/emailProcessor';
+import { calculateEmailStats, getUniqueChannels } from '@/utils/emailProcessor';
+import { useAuth } from '@/contexts/AuthContext';
+import { useGraphEmails } from '@/hooks/useGraphEmails';
 import EmailList from '@/components/EmailList';
 import FilterPanel from '@/components/FilterPanel';
 import SearchBar from '@/components/SearchBar';
 import Dashboard from '@/components/Dashboard';
 import ExportPanel from '@/components/ExportPanel';
 import HelpSection from '@/components/HelpSection';
-import { Mail, BarChart3, Download, Filter, HelpCircle } from 'lucide-react';
+import LoginComponent from '@/components/LoginComponent';
+import { Mail, BarChart3, Download, Filter, HelpCircle, RefreshCw, LogOut, User, AlertCircle } from 'lucide-react';
 
 export default function Home() {
-  const [emails] = useState(detectDuplicates(mockEmails));
+  const { isAuthenticated, user, logout, loading: authLoading } = useAuth();
   const [filters, setFilters] = useState<EmailFilter>({});
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({ query: '', fields: ['subject', 'from'] });
   const [activeTab, setActiveTab] = useState<'emails' | 'dashboard' | 'export' | 'help'>('emails');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [useMockData, setUseMockData] = useState(false);
+
+  // Use Graph API or mock data based on authentication and user preference
+  const { 
+    emails: graphEmails, 
+    filteredEmails: graphFilteredEmails, 
+    loading: graphLoading, 
+    error: graphError, 
+    refreshEmails 
+  } = useGraphEmails({
+    filters,
+    searchOptions,
+    pageSize: 100,
+    autoRefresh: true
+  });
+
+  // Fallback to mock data if needed
+  const emails = useMemo(() => {
+    if (!isAuthenticated || useMockData) {
+      return mockEmails;
+    }
+    return graphEmails;
+  }, [isAuthenticated, useMockData, graphEmails]);
 
   const filteredEmails = useMemo(() => {
-    let result = filterEmails(emails, filters);
-    result = searchEmails(result, searchOptions);
-    return result;
-  }, [emails, filters, searchOptions]);
+    if (!isAuthenticated || useMockData) {
+      return mockEmails;
+    }
+    return graphFilteredEmails;
+  }, [isAuthenticated, useMockData, graphFilteredEmails]);
 
   const emailStats = useMemo(() => calculateEmailStats(filteredEmails), [filteredEmails]);
   const availableChannels = useMemo(() => getUniqueChannels(emails), [emails]);
+
+  // Show login component if not authenticated
+  if (!isAuthenticated && !authLoading) {
+    return <LoginComponent />;
+  }
+
+  // Show loading state during authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'emails', label: 'Emails', icon: Mail, count: filteredEmails.length },
@@ -48,6 +92,46 @@ export default function Home() {
               <div className="text-sm text-gray-500">
                 {filteredEmails.length} of {emails.length} emails
               </div>
+              
+              {/* User info and controls */}
+              <div className="flex items-center space-x-2">
+                <div className="text-sm text-gray-600">
+                  <User className="h-4 w-4 inline mr-1" />
+                  {user?.name || user?.username || 'User'}
+                </div>
+                
+                {/* Refresh button */}
+                <button
+                  onClick={refreshEmails}
+                  disabled={graphLoading}
+                  className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50"
+                  title="Refresh emails"
+                >
+                  <RefreshCw className={`h-4 w-4 ${graphLoading ? 'animate-spin' : ''}`} />
+                </button>
+                
+                {/* Toggle mock data */}
+                <button
+                  onClick={() => setUseMockData(!useMockData)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium ${
+                    useMockData 
+                      ? 'bg-yellow-100 text-yellow-800' 
+                      : 'bg-green-100 text-green-800'
+                  }`}
+                >
+                  {useMockData ? 'Mock Data' : 'Live Data'}
+                </button>
+                
+                {/* Logout button */}
+                <button
+                  onClick={logout}
+                  className="p-2 rounded-md text-gray-400 hover:text-gray-500"
+                  title="Sign out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+              
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500"
@@ -85,6 +169,22 @@ export default function Home() {
           </nav>
         </div>
       </div>
+
+      {/* Error Display */}
+      {graphError && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="bg-red-50 border border-red-200 rounded-md p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <AlertCircle className="h-5 w-5 text-red-400" />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-800">{graphError}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

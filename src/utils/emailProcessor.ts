@@ -1,4 +1,5 @@
-import { Email, EmailFilter, SearchOptions, EmailStats } from '@/types/email';
+import { Email, EmailFilter, SearchOptions, EmailStats, EmailAttachment } from '@/types/email';
+import { supplierConfig } from '@/data/mockEmails';
 
 // Function to detect duplicates and mark them
 export function detectDuplicates(emails: Email[]): Email[] {
@@ -245,4 +246,164 @@ export function formatDate(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit'
   });
+}
+
+// Transform Microsoft Graph API message to our Email format
+export function transformGraphMessage(graphMessage: unknown): Email {
+  const message = graphMessage as Record<string, unknown>;
+  const from = (message.from as Record<string, unknown>)?.emailAddress?.address as string || '';
+  const supplier = identifySupplier(from);
+  const channel = identifyChannel(message.subject as string, supplier);
+  const type = identifyEmailType(message.subject as string);
+  
+  return {
+    id: message.id as string,
+    subject: (message.subject as string) || '',
+    from: from,
+    supplier: supplier,
+    channel: channel,
+    type: type,
+    hasAttachments: message.hasAttachments as boolean || false,
+    receivedDateTime: message.receivedDateTime as string,
+    categories: (message.categories as string[]) || [],
+    isRead: message.isRead as boolean || false,
+    isFlagged: (message.flag as Record<string, unknown>)?.flagStatus === 'flagged',
+    body: (message.bodyPreview as string) || '',
+    attachments: message.attachments ? transformAttachments(message.attachments as unknown[]) : undefined,
+    isDuplicate: false
+  };
+}
+
+// Transform Graph API attachments to our format
+export function transformAttachments(graphAttachments: unknown[]): EmailAttachment[] {
+  const attachments = graphAttachments as Record<string, unknown>[];
+  return attachments.map(attachment => ({
+    id: attachment.id as string,
+    name: attachment.name as string,
+    contentType: attachment.contentType as string,
+    size: attachment.size as number
+  }));
+}
+
+// Identify supplier from email address
+export function identifySupplier(fromAddress: string): string {
+  const domain = fromAddress.split('@')[1]?.toLowerCase();
+  
+  if (!domain) return 'Unknown';
+  
+  for (const [supplier, config] of Object.entries(supplierConfig)) {
+    if (config.domains.some(supplierDomain => domain.includes(supplierDomain))) {
+      return supplier;
+    }
+  }
+  
+  return 'Unknown';
+}
+
+// Identify channel from subject and supplier
+export function identifyChannel(subject: string, supplier: string): string {
+  const lowerSubject = subject.toLowerCase();
+  
+  // BBC channels
+  if (supplier === 'BBC') {
+    if (lowerSubject.includes('bbc one') || lowerSubject.includes('bbc1')) return 'BBC One';
+    if (lowerSubject.includes('bbc two') || lowerSubject.includes('bbc2')) return 'BBC Two';
+    if (lowerSubject.includes('bbc three') || lowerSubject.includes('bbc3')) return 'BBC Three';
+    if (lowerSubject.includes('bbc four') || lowerSubject.includes('bbc4')) return 'BBC Four';
+    if (lowerSubject.includes('cbbc')) return 'CBBC';
+    if (lowerSubject.includes('cbeebies')) return 'CBeebies';
+    if (lowerSubject.includes('bbc news')) return 'BBC News';
+    if (lowerSubject.includes('bbc parliament')) return 'BBC Parliament';
+    return 'BBC';
+  }
+  
+  // ITV channels
+  if (supplier === 'ITV') {
+    if (lowerSubject.includes('itv2')) return 'ITV2';
+    if (lowerSubject.includes('itv3')) return 'ITV3';
+    if (lowerSubject.includes('itv4')) return 'ITV4';
+    if (lowerSubject.includes('itvbe')) return 'ITVBe';
+    if (lowerSubject.includes('citv')) return 'CITV';
+    return 'ITV1';
+  }
+  
+  // Channel 4 channels
+  if (supplier === 'Channel 4') {
+    if (lowerSubject.includes('e4')) return 'E4';
+    if (lowerSubject.includes('more4')) return 'More4';
+    if (lowerSubject.includes('film4')) return 'Film4';
+    if (lowerSubject.includes('4music')) return '4Music';
+    return 'Channel 4';
+  }
+  
+  // Sky channels
+  if (supplier === 'Sky') {
+    if (lowerSubject.includes('sky sports')) return 'Sky Sports';
+    if (lowerSubject.includes('sky news')) return 'Sky News';
+    if (lowerSubject.includes('sky atlantic')) return 'Sky Atlantic';
+    if (lowerSubject.includes('sky cinema')) return 'Sky Cinema';
+    if (lowerSubject.includes('sky one')) return 'Sky One';
+    if (lowerSubject.includes('sky two')) return 'Sky Two';
+    return 'Sky';
+  }
+  
+  // UKTV channels
+  if (supplier === 'UKTV') {
+    if (lowerSubject.includes('dave')) return 'Dave';
+    if (lowerSubject.includes('gold')) return 'Gold';
+    if (lowerSubject.includes('w')) return 'W';
+    if (lowerSubject.includes('drama')) return 'Drama';
+    if (lowerSubject.includes('yesterday')) return 'Yesterday';
+    return 'UKTV';
+  }
+  
+  // Discovery channels
+  if (supplier === 'Discovery') {
+    if (lowerSubject.includes('discovery channel')) return 'Discovery Channel';
+    if (lowerSubject.includes('animal planet')) return 'Animal Planet';
+    if (lowerSubject.includes('tlc')) return 'TLC';
+    if (lowerSubject.includes('investigation discovery')) return 'Investigation Discovery';
+    return 'Discovery';
+  }
+  
+  return supplier;
+}
+
+// Identify email type from subject and body
+export function identifyEmailType(subject: string): 'schedule' | 'update' | 'press' | 'technical' | 'marketing' {
+  const lowerSubject = subject.toLowerCase();
+  // const lowerBody = bodyPreview?.toLowerCase() || ''; // Removed unused variable
+  
+  // Schedule indicators
+  if (lowerSubject.includes('schedule') || lowerSubject.includes('programme guide') || 
+      lowerSubject.includes('tv guide') || lowerSubject.includes('lineup')) {
+    return 'schedule';
+  }
+  
+  // Update indicators
+  if (lowerSubject.includes('update') || lowerSubject.includes('change') || 
+      lowerSubject.includes('urgent') || lowerSubject.includes('last minute')) {
+    return 'update';
+  }
+  
+  // Press indicators
+  if (lowerSubject.includes('press') || lowerSubject.includes('news') || 
+      lowerSubject.includes('announcement') || lowerSubject.includes('release')) {
+    return 'press';
+  }
+  
+  // Technical indicators
+  if (lowerSubject.includes('technical') || lowerSubject.includes('spec') || 
+      lowerSubject.includes('broadcast') || lowerSubject.includes('transmission')) {
+    return 'technical';
+  }
+  
+  // Marketing indicators
+  if (lowerSubject.includes('marketing') || lowerSubject.includes('promo') || 
+      lowerSubject.includes('trailer') || lowerSubject.includes('campaign')) {
+    return 'marketing';
+  }
+  
+  // Default to schedule for most TV-related emails
+  return 'schedule';
 }
