@@ -308,14 +308,18 @@ export function identifyChannel(subject: string, supplier: string): string {
   
   // BBC channels
   if (supplier === 'BBC') {
+    if (lowerSubject.includes('bbc one scotland') || lowerSubject.includes('bbc one scot')) return 'BBC One Scotland';
     if (lowerSubject.includes('bbc one') || lowerSubject.includes('bbc1')) return 'BBC One';
     if (lowerSubject.includes('bbc two') || lowerSubject.includes('bbc2')) return 'BBC Two';
     if (lowerSubject.includes('bbc three') || lowerSubject.includes('bbc3')) return 'BBC Three';
     if (lowerSubject.includes('bbc four') || lowerSubject.includes('bbc4')) return 'BBC Four';
+    if (lowerSubject.includes('bbc scotland')) return 'BBC Scotland';
+    if (lowerSubject.includes('bbc alba')) return 'BBC Alba';
+    if (lowerSubject.includes('bbc world service')) return 'BBC World Service';
+    if (lowerSubject.includes('bbc parliament')) return 'BBC Parliament';
     if (lowerSubject.includes('cbbc')) return 'CBBC';
     if (lowerSubject.includes('cbeebies')) return 'CBeebies';
     if (lowerSubject.includes('bbc news')) return 'BBC News';
-    if (lowerSubject.includes('bbc parliament')) return 'BBC Parliament';
     return 'BBC';
   }
   
@@ -368,6 +372,35 @@ export function identifyChannel(subject: string, supplier: string): string {
     return 'Discovery';
   }
   
+  // Colors channels
+  if (supplier === 'Colors') {
+    if (lowerSubject.includes('colors cineplex')) return 'Colors Cineplex Europe';
+    if (lowerSubject.includes('colors tv')) return 'Colors TV';
+    return 'Colors';
+  }
+  
+  // Bauer Media channels
+  if (supplier === 'Bauer Media') {
+    if (lowerSubject.includes('absolute radio') || lowerSubject.includes('absolute')) return 'Absolute Radio';
+    if (lowerSubject.includes('kiss fm')) return 'Kiss FM';
+    if (lowerSubject.includes('magic fm')) return 'Magic FM';
+    return 'Bauer Media';
+  }
+  
+  // MG ALBA channels
+  if (supplier === 'MG ALBA') {
+    if (lowerSubject.includes('bbc alba')) return 'BBC Alba';
+    return 'MG ALBA';
+  }
+  
+  // MTV channels
+  if (supplier === 'MTV') {
+    if (lowerSubject.includes('mtv 80s')) return 'MTV 80s';
+    if (lowerSubject.includes('mtv hits')) return 'MTV Hits';
+    if (lowerSubject.includes('mtv music')) return 'MTV Music';
+    return 'MTV';
+  }
+  
   return supplier;
 }
 
@@ -376,28 +409,38 @@ export function identifyEmailType(subject: string): 'schedule' | 'update' | 'pre
   const lowerSubject = subject.toLowerCase();
   // const lowerBody = bodyPreview?.toLowerCase() || ''; // Removed unused variable
   
-  // Schedule indicators
-  if (lowerSubject.includes('schedule') || lowerSubject.includes('programme guide') || 
-      lowerSubject.includes('tv guide') || lowerSubject.includes('lineup')) {
-    return 'schedule';
-  }
-  
-  // Update indicators
+  // Update indicators (highest priority)
   if (lowerSubject.includes('update') || lowerSubject.includes('change') || 
-      lowerSubject.includes('urgent') || lowerSubject.includes('last minute')) {
+      lowerSubject.includes('urgent') || lowerSubject.includes('last minute') ||
+      lowerSubject.includes('amendment') || lowerSubject.includes('billing updated') || 
+      lowerSubject.includes('final')) {
     return 'update';
-  }
-  
-  // Press indicators
-  if (lowerSubject.includes('press') || lowerSubject.includes('news') || 
-      lowerSubject.includes('announcement') || lowerSubject.includes('release')) {
-    return 'press';
   }
   
   // Technical indicators
   if (lowerSubject.includes('technical') || lowerSubject.includes('spec') || 
-      lowerSubject.includes('broadcast') || lowerSubject.includes('transmission')) {
+      lowerSubject.includes('broadcast') || lowerSubject.includes('transmission') ||
+      lowerSubject.includes('epg') || lowerSubject.includes('sent') || 
+      lowerSubject.includes('to tasc')) {
     return 'technical';
+  }
+  
+  // Press indicators
+  if (lowerSubject.includes('press') || lowerSubject.includes('news') || 
+      lowerSubject.includes('announcement') || lowerSubject.includes('release') ||
+      lowerSubject.includes('programme information')) {
+    return 'press';
+  }
+  
+  // Schedule indicators (includes weekly schedules)
+  if (lowerSubject.includes('schedule') || lowerSubject.includes('programme guide') || 
+      lowerSubject.includes('tv guide') || lowerSubject.includes('lineup') ||
+      lowerSubject.includes('week') || lowerSubject.includes('wk ') ||
+      lowerSubject.includes('saturday') || lowerSubject.includes('sunday') || 
+      lowerSubject.includes('monday') || lowerSubject.includes('tuesday') || 
+      lowerSubject.includes('wednesday') || lowerSubject.includes('thursday') || 
+      lowerSubject.includes('friday') || lowerSubject.includes('re:')) {
+    return 'schedule';
   }
   
   // Marketing indicators

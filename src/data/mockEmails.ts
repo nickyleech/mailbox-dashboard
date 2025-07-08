@@ -1,306 +1,8 @@
 import { Email } from '@/types/email';
+import { realMockEmails } from './realMockEmails';
 
-const now = new Date();
-const thirtyMinAgo = new Date(now.getTime() - 30 * 60 * 1000);
-const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
-
-export const mockEmails: Email[] = [
-  {
-    id: 'msg_recent_001',
-    subject: 'URGENT: BBC One Schedule Change - Tonight',
-    from: 'urgent@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC One',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: thirtyMinAgo.toISOString(),
-    categories: ['Schedule Update', 'BBC'],
-    isRead: false,
-    isFlagged: true
-  },
-  {
-    id: 'msg_recent_002',
-    subject: 'ITV News Flash - Breaking Story',
-    from: 'newsflash@itv.com',
-    supplier: 'ITV',
-    channel: 'ITV1',
-    type: 'press',
-    hasAttachments: true,
-    receivedDateTime: oneHourAgo.toISOString(),
-    categories: ['Press Release', 'ITV'],
-    isRead: false,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_recent_001',
-        name: 'Breaking_News_Statement.pdf',
-        contentType: 'application/pdf',
-        size: 1024000
-      }
-    ]
-  },
-  {
-    id: 'msg_recent_003',
-    subject: 'Channel 4 Programming Update',
-    from: 'programming@channel4.com',
-    supplier: 'Channel 4',
-    channel: 'Channel 4',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: threeHoursAgo.toISOString(),
-    categories: ['Schedule Update', 'Channel 4'],
-    isRead: true,
-    isFlagged: false
-  },
-  {
-    id: 'msg_001',
-    subject: 'BBC One Schedule - Week 28',
-    from: 'schedules@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC One',
-    type: 'schedule',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T09:00:00Z',
-    categories: ['TV Schedule', 'BBC'],
-    isRead: false,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_001',
-        name: 'BBC_One_Schedule_Week28.pdf',
-        contentType: 'application/pdf',
-        size: 2048576
-      }
-    ]
-  },
-  {
-    id: 'msg_002',
-    subject: 'ITV Schedule Update - Tonight\'s Programming',
-    from: 'updates@itv.com',
-    supplier: 'ITV',
-    channel: 'ITV1',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: '2025-07-08T14:30:00Z',
-    categories: ['Schedule Update', 'ITV'],
-    isRead: true,
-    isFlagged: false
-  },
-  {
-    id: 'msg_003',
-    subject: 'Channel 4 News - Special Report Tonight',
-    from: 'newsdesk@channel4.com',
-    supplier: 'Channel 4',
-    channel: 'Channel 4',
-    type: 'press',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T16:15:00Z',
-    categories: ['Press Release', 'Channel 4'],
-    isRead: false,
-    isFlagged: true,
-    attachments: [
-      {
-        id: 'att_002',
-        name: 'Special_Report_Press_Kit.zip',
-        contentType: 'application/zip',
-        size: 15728640
-      }
-    ]
-  },
-  {
-    id: 'msg_004',
-    subject: 'Sky Sports Premier League Schedule',
-    from: 'sports@sky.com',
-    supplier: 'Sky',
-    channel: 'Sky Sports',
-    type: 'schedule',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T11:20:00Z',
-    categories: ['TV Schedule', 'Sky', 'Sports'],
-    isRead: true,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_003',
-        name: 'Premier_League_Schedule.xlsx',
-        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        size: 1048576
-      }
-    ]
-  },
-  {
-    id: 'msg_005',
-    subject: 'UKTV Dave Comedy Schedule Updates',
-    from: 'programming@uktv.co.uk',
-    supplier: 'UKTV',
-    channel: 'Dave',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: '2025-07-08T13:45:00Z',
-    categories: ['Schedule Update', 'UKTV'],
-    isRead: false,
-    isFlagged: false
-  },
-  {
-    id: 'msg_006',
-    subject: 'Discovery Channel - Planet Earth III Technical Specs',
-    from: 'technical@discovery.com',
-    supplier: 'Discovery',
-    channel: 'Discovery Channel',
-    type: 'technical',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T08:30:00Z',
-    categories: ['Technical', 'Discovery'],
-    isRead: true,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_004',
-        name: 'Planet_Earth_III_Tech_Specs.pdf',
-        contentType: 'application/pdf',
-        size: 3145728
-      }
-    ]
-  },
-  {
-    id: 'msg_007',
-    subject: 'BBC Two Documentary Series - Marketing Materials',
-    from: 'marketing@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC Two',
-    type: 'marketing',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T10:15:00Z',
-    categories: ['Marketing', 'BBC'],
-    isRead: false,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_005',
-        name: 'Documentary_Marketing_Kit.zip',
-        contentType: 'application/zip',
-        size: 25165824
-      }
-    ]
-  },
-  {
-    id: 'msg_008',
-    subject: 'ITV2 Reality Show Schedule - Love Island Updates',
-    from: 'reality@itv.com',
-    supplier: 'ITV',
-    channel: 'ITV2',
-    type: 'schedule',
-    hasAttachments: false,
-    receivedDateTime: '2025-07-08T17:00:00Z',
-    categories: ['TV Schedule', 'ITV', 'Reality'],
-    isRead: true,
-    isFlagged: true
-  },
-  {
-    id: 'msg_009',
-    subject: 'Sky Atlantic Drama Series - House of the Dragon Press',
-    from: 'press@sky.com',
-    supplier: 'Sky',
-    channel: 'Sky Atlantic',
-    type: 'press',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T12:00:00Z',
-    categories: ['Press Release', 'Sky', 'Drama'],
-    isRead: false,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_006',
-        name: 'House_of_Dragon_Press_Release.pdf',
-        contentType: 'application/pdf',
-        size: 4194304
-      }
-    ]
-  },
-  {
-    id: 'msg_010',
-    subject: 'Channel 4 Film Schedule - Weekend Programming',
-    from: 'films@channel4.com',
-    supplier: 'Channel 4',
-    channel: 'Channel 4',
-    type: 'schedule',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T15:30:00Z',
-    categories: ['TV Schedule', 'Channel 4', 'Films'],
-    isRead: true,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_007',
-        name: 'Weekend_Film_Schedule.pdf',
-        contentType: 'application/pdf',
-        size: 1572864
-      }
-    ]
-  },
-  // Duplicate emails for testing
-  {
-    id: 'msg_dup_001',
-    subject: 'BBC One Schedule - Week 28',
-    from: 'schedules@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC One',
-    type: 'schedule',
-    hasAttachments: true,
-    receivedDateTime: '2025-07-08T09:15:00Z',
-    categories: ['TV Schedule', 'BBC'],
-    isRead: false,
-    isFlagged: false,
-    attachments: [
-      {
-        id: 'att_dup_001',
-        name: 'BBC_One_Schedule_Week28_v2.pdf',
-        contentType: 'application/pdf',
-        size: 2100000
-      }
-    ]
-  },
-  {
-    id: 'msg_dup_002',
-    subject: 'Re: BBC One Schedule - Week 28',
-    from: 'schedules@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC One',
-    type: 'schedule',
-    hasAttachments: false,
-    receivedDateTime: '2025-07-08T09:30:00Z',
-    categories: ['TV Schedule', 'BBC'],
-    isRead: false,
-    isFlagged: false
-  },
-  {
-    id: 'msg_dup_003',
-    subject: 'ITV Schedule Update - Tonight\'s Programming',
-    from: 'updates@itv.com',
-    supplier: 'ITV',
-    channel: 'ITV1',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: '2025-07-08T14:45:00Z',
-    categories: ['Schedule Update', 'ITV'],
-    isRead: false,
-    isFlagged: false
-  },
-  {
-    id: 'msg_dup_004',
-    subject: 'URGENT: BBC One Schedule Change - Tonight',
-    from: 'urgent@bbc.co.uk',
-    supplier: 'BBC',
-    channel: 'BBC One',
-    type: 'update',
-    hasAttachments: false,
-    receivedDateTime: new Date(now.getTime() - 25 * 60 * 1000).toISOString(),
-    categories: ['Schedule Update', 'BBC'],
-    isRead: false,
-    isFlagged: true
-  }
-];
+// Use realistic mock data based on actual TV schedule emails
+export const mockEmails: Email[] = realMockEmails;
 
 export const supplierConfig = {
   'BBC': {
@@ -326,6 +28,26 @@ export const supplierConfig = {
   'Discovery': {
     color: 'bg-yellow-100 text-yellow-800',
     domains: ['discovery.com', 'discovery.co.uk']
+  },
+  'Colors': {
+    color: 'bg-pink-100 text-pink-800',
+    domains: ['whatsonindia.com', 'colorstv.com']
+  },
+  'Bauer Media': {
+    color: 'bg-teal-100 text-teal-800',
+    domains: ['bauermedia.co.uk', 'absoluteradio.co.uk']
+  },
+  'MG ALBA': {
+    color: 'bg-indigo-100 text-indigo-800',
+    domains: ['mgalba.com', 'bbc.co.uk']
+  },
+  'PA Media': {
+    color: 'bg-cyan-100 text-cyan-800',
+    domains: ['pa.media', 'pamediagroup.com']
+  },
+  'MTV': {
+    color: 'bg-violet-100 text-violet-800',
+    domains: ['mtv.com', 'viacom.com']
   }
 };
 
