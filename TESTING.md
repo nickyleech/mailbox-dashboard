@@ -4,6 +4,113 @@
 
 This application is a comprehensive demo of an Outlook Email Dashboard designed to manage 600+ daily TV channel emails. The dashboard provides advanced filtering, search, analytics, and export capabilities specifically tailored for media industry workflows.
 
+## What the Application Does
+
+The Email Dashboard is specifically designed for media industry professionals who need to efficiently manage high-volume email communications from various TV networks and channels. The application solves the challenge of processing hundreds of daily emails containing schedules, updates, press releases, and technical communications from major UK broadcasters.
+
+### Key Capabilities:
+- **Email Volume Management**: Handles 600+ emails daily with efficient sorting and filtering
+- **Media Industry Focus**: Specialized for TV channel communications and broadcast workflows
+- **Advanced Search**: Boolean search operators for complex queries across multiple fields
+- **Intelligent Categorization**: Automatic classification of emails by type (Schedule, Update, Press, Technical, Marketing)
+- **Supplier Organization**: Color-coded system for major UK broadcasters (BBC, ITV, Channel 4, Sky, UKTV, Discovery)
+- **Analytics & Reporting**: Visual dashboards showing email distribution, trends, and statistics
+- **Export Functionality**: Multiple export formats (CSV, JSON, detailed reports) for external analysis
+
+### Target Users:
+- Media operations teams
+- TV schedule coordinators
+- Broadcast production staff
+- Content management professionals
+- Media industry analysts
+
+## Demo Mode vs Production Mode
+
+### Demo Mode (Current Implementation)
+
+**Data Source:**
+- Uses mock data with 200+ sample emails
+- Simulates realistic TV industry email patterns
+- Includes authentic-looking supplier communications
+- Demonstrates full functionality without live email access
+
+**Features Available:**
+- ✅ Complete UI/UX demonstration
+- ✅ All filtering and search capabilities
+- ✅ Analytics dashboard with sample data
+- ✅ Export functionality testing
+- ✅ Responsive design showcase
+- ✅ Performance optimization display
+- ✅ No authentication required
+- ✅ Instant startup and testing
+
+**Limitations:**
+- ❌ No real email integration
+- ❌ Static data set (doesn't grow)
+- ❌ No live notifications
+- ❌ No actual email actions (mark as read, flag, etc.)
+
+### Production Mode (Live Email Integration)
+
+**Data Source:**
+- Microsoft Graph API integration
+- Real-time Outlook email synchronization
+- Live email content analysis
+- Dynamic data growth and updates
+
+**Additional Features:**
+- ✅ OAuth 2.0 authentication with Microsoft
+- ✅ Real-time email processing
+- ✅ Live categorization and tagging
+- ✅ Actual email actions (read/unread, flag, categorize)
+- ✅ Background synchronization
+- ✅ Push notifications for new emails
+- ✅ Email content analysis and AI categorization
+- ✅ Custom rules and automation
+- ✅ Multi-user support with role-based access
+- ✅ Email archiving and retention policies
+
+**Requirements:**
+- Azure AD app registration
+- Microsoft 365 business account
+- Appropriate email permissions
+- Secure hosting environment
+- SSL/TLS encryption
+- User authentication system
+
+**Performance Considerations:**
+- Server-side pagination for large datasets
+- Email content caching for faster searches
+- Background workers for sync operations
+- Rate limiting for API compliance
+- Optimized database queries
+
+### Migration Path from Demo to Production
+
+1. **Authentication Setup** (1-2 weeks)
+   - Azure AD app registration
+   - MSAL library integration
+   - OAuth flow implementation
+   - Token management system
+
+2. **Data Integration** (2-3 weeks)
+   - Replace mock data with Graph API calls
+   - Implement real-time synchronization
+   - Email content parsing and categorization
+   - Database setup for email metadata
+
+3. **Advanced Features** (2-3 weeks)
+   - Email action capabilities
+   - Custom categorization rules
+   - Notification system
+   - Performance optimization
+
+4. **Production Deployment** (1-2 weeks)
+   - Security hardening
+   - Monitoring setup
+   - User access controls
+   - Documentation and training
+
 ## Current Features (Demo Mode)
 
 ### 📧 Email Management
