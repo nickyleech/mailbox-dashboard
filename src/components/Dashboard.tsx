@@ -4,6 +4,7 @@ import { Email, EmailStats } from '@/types/email';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Mail, Paperclip, TrendingUp, Users, Clock, Settings } from 'lucide-react';
 import { useState } from 'react';
+import ChannelStatsPanel from './ChannelStatsPanel';
 
 interface DashboardProps {
   emails: Email[];
@@ -254,6 +255,9 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
           </div>
         </div>
       </div>
+
+      {/* Channel Statistics Panel */}
+      <ChannelStatsPanel emails={emails} />
     </div>
   );
 }

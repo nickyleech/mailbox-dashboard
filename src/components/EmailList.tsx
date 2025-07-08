@@ -186,7 +186,12 @@ ${email.body || 'Email content not available'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{email.channel}</div>
+                  <div 
+                    className="text-sm text-gray-900 max-w-32 truncate" 
+                    title={email.channel}
+                  >
+                    {email.channel}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

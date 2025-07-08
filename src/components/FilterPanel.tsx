@@ -5,6 +5,7 @@ import { EmailFilter } from '@/types/email';
 import { supplierConfig, typeConfig } from '@/data/mockEmails';
 import { Filter, X, Calendar, Paperclip, Clock, Copy } from 'lucide-react';
 import SearchableDropdown from './SearchableDropdown';
+import GroupedChannelDropdown from './GroupedChannelDropdown';
 
 interface FilterPanelProps {
   filters: EmailFilter;
@@ -92,13 +93,27 @@ export default function FilterPanel({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Channel
+              {availableChannels.length > 20 && (
+                <span className="ml-1 text-xs text-gray-500">
+                  ({availableChannels.length} channels)
+                </span>
+              )}
             </label>
-            <SearchableDropdown
-              options={availableChannels}
-              value={localFilters.channel || ''}
-              onChange={(value) => handleFilterChange('channel', value || undefined)}
-              emptyText="All channels"
-            />
+            {availableChannels.length > 20 ? (
+              <GroupedChannelDropdown
+                channels={availableChannels}
+                value={localFilters.channel || ''}
+                onChange={(value) => handleFilterChange('channel', value || undefined)}
+                emptyText="All channels"
+              />
+            ) : (
+              <SearchableDropdown
+                options={availableChannels}
+                value={localFilters.channel || ''}
+                onChange={(value) => handleFilterChange('channel', value || undefined)}
+                emptyText="All channels"
+              />
+            )}
           </div>
 
           {/* Type Filter */}
