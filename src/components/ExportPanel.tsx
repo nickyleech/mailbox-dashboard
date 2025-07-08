@@ -12,7 +12,7 @@ interface ExportPanelProps {
 export default function ExportPanel({ emails, filteredEmails }: ExportPanelProps) {
   const [exportType, setExportType] = useState<'csv' | 'json' | 'report'>('csv');
   const [includeAttachments, setIncludeAttachments] = useState(false);
-  const [dateRange, setDateRange] = useState<'all' | 'filtered' | 'custom'>('filtered');
+  const [dateRange, setDateRange] = useState<'all' | 'filtered' | 'custom' | 'duplicates'>('filtered');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
 
@@ -65,7 +65,7 @@ export default function ExportPanel({ emails, filteredEmails }: ExportPanelProps
       metadata: {
         exportDate: new Date().toISOString(),
         totalEmails: dataEmails.length,
-        dateRange: dateRange === 'filtered' ? 'Filtered results' : dateRange === 'all' ? 'All emails' : `${customStart} to ${customEnd}`
+        dateRange: dateRange === 'filtered' ? 'Filtered results' : dateRange === 'all' ? 'All emails' : dateRange === 'duplicates' ? 'Duplicates only' : `${customStart} to ${customEnd}`
       },
       emails: dataEmails.map(email => ({
         ...email,
@@ -102,7 +102,7 @@ export default function ExportPanel({ emails, filteredEmails }: ExportPanelProps
     const report = `
 EMAIL DASHBOARD REPORT
 Generated: ${new Date().toLocaleString('en-GB')}
-Date Range: ${dateRange === 'filtered' ? 'Filtered results' : dateRange === 'all' ? 'All emails' : `${customStart} to ${customEnd}`}
+Date Range: ${dateRange === 'filtered' ? 'Filtered results' : dateRange === 'all' ? 'All emails' : dateRange === 'duplicates' ? 'Duplicates only' : `${customStart} to ${customEnd}`}
 
 SUMMARY
 =======
@@ -169,6 +169,11 @@ ${'='.repeat(80)}
           if (end && emailDate > end) return false;
           return true;
         });
+        break;
+      case 'duplicates':
+        dataToExport = emails.filter(email => 
+          email.subject.includes('DUPLICATE') || email.subject.includes('Re:') || email.subject.includes('FWD:')
+        );
         break;
     }
 
@@ -253,7 +258,7 @@ ${'='.repeat(80)}
                 name="dateRange"
                 value="filtered"
                 checked={dateRange === 'filtered'}
-                onChange={(e) => setDateRange(e.target.value as 'all' | 'filtered' | 'custom')}
+                onChange={(e) => setDateRange(e.target.value as 'all' | 'filtered' | 'custom' | 'duplicates')}
                 className="text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm">Current filtered results ({filteredEmails.length} emails)</span>
@@ -265,7 +270,7 @@ ${'='.repeat(80)}
                 name="dateRange"
                 value="all"
                 checked={dateRange === 'all'}
-                onChange={(e) => setDateRange(e.target.value as 'all' | 'filtered' | 'custom')}
+                onChange={(e) => setDateRange(e.target.value as 'all' | 'filtered' | 'custom' | 'duplicates')}
                 className="text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm">All emails ({emails.length} emails)</span>
@@ -281,6 +286,18 @@ ${'='.repeat(80)}
                 className="text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm">Custom date range</span>
+            </label>
+
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="dateRange"
+                value="duplicates"
+                checked={dateRange === 'duplicates'}
+                onChange={(e) => setDateRange(e.target.value as 'all' | 'filtered' | 'custom' | 'duplicates')}
+                className="text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm">Duplicates only ({emails.filter(email => email.subject.includes('DUPLICATE') || email.subject.includes('Re:')).length} emails)</span>
             </label>
 
             {dateRange === 'custom' && (

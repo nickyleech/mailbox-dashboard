@@ -110,6 +110,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(response.account);
         setIsAuthenticated(true);
         await setupGraphService(msalInstance, response.account);
+        
+        // Redirect to shared mailbox in Outlook Web App
+        const sharedMailboxUrl = 'https://outlook.office.com/mail/TV.Schedule@pamediagroup.com/';
+        window.open(sharedMailboxUrl, '_blank');
       }
     } catch (err) {
       console.error('Login failed:', err);

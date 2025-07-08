@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, Mail, Shield, Users, Play } from 'lucide-react';
+import { LogIn, Shield, Users, Play } from 'lucide-react';
 
 interface LoginComponentProps {
   onDemoMode?: () => void;
@@ -18,15 +18,14 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <Mail className="h-12 w-12 text-blue-600" />
-        </div>
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Mailbox Dashboard
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Sign in with your Microsoft account to access your emails
-        </p>
+        <div className="mt-3 text-center">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            📧 TV.Schedule@pamediagroup.com
+          </span>
+        </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -45,38 +44,34 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
           )}
 
           <div className="space-y-6">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <Shield className="h-5 w-5 text-yellow-400" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-900">
+                    TV Schedule Emails Only
+                  </h3>
+                  <p className="mt-1 text-sm text-yellow-800">
+                    This application is for TV Schedule emails only, it will not work with personal emails.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 gap-4">
               <div className="text-center">
                 <Users className="mx-auto h-8 w-8 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  Microsoft 365 Integration
+                  Shared Mailbox Access
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  Connect to your Outlook mailbox to manage TV channel emails
+                  Connect to the dedicated TV Schedule shared mailbox
                 </p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                <h4 className="text-sm font-medium text-blue-900">Features:</h4>
-                <ul className="mt-2 text-sm text-blue-800 space-y-1">
-                  <li>• Categorize emails by TV supplier (BBC, ITV, etc.)</li>
-                  <li>• Filter by channel and content type</li>
-                  <li>• Advanced search and duplicate detection</li>
-                  <li>• Export and reporting capabilities</li>
-                </ul>
-              </div>
-
-              <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                <h4 className="text-sm font-medium text-green-900">Permissions Required:</h4>
-                <ul className="mt-2 text-sm text-green-800 space-y-1">
-                  <li>• Read your email messages</li>
-                  <li>• Basic profile information</li>
-                  <li>• Manage email categories (optional)</li>
-                </ul>
-              </div>
-            </div>
 
             <div className="space-y-3">
               <button
@@ -125,7 +120,7 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
 
         <div className="mt-6 text-center text-xs text-gray-500">
           <p>
-            This application requires Microsoft 365 authentication to access your Outlook mailbox.
+            This application requires Microsoft 365 authentication to access the shared mailbox.
             Your credentials are handled securely by Microsoft&apos;s authentication service.
           </p>
         </div>

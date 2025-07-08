@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Mail, Search, Filter, BarChart3, Download, Forward, Clock, Settings, Paperclip, Eye, Copy } from 'lucide-react';
+import { ChevronDown, ChevronUp, Mail, Search, Filter, BarChart3, Download, Forward, Clock, Settings, Paperclip, Eye, Copy, Tv, AlertTriangle } from 'lucide-react';
 
 export default function HelpSection() {
   const [expandedSection, setExpandedSection] = useState<string | null>('getting-started');
@@ -12,21 +12,59 @@ export default function HelpSection() {
 
   const helpSections = [
     {
+      id: 'tv-schedule-overview',
+      title: 'TV Schedule Dashboard Overview',
+      icon: Tv,
+      content: (
+        <div className="space-y-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
+              <h4 className="font-semibold text-yellow-900">⚠️ TV Schedule Emails Only</h4>
+            </div>
+            <p className="text-yellow-800 text-sm">
+              This application is specifically designed for managing TV programme schedule emails from broadcasters and suppliers. 
+              It will <strong>NOT</strong> work with personal emails, business correspondence, or other types of emails.
+            </p>
+          </div>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-900 mb-2">📺 What This Dashboard Does:</h4>
+            <ul className="list-disc list-inside text-blue-800 space-y-1">
+              <li>Manages emails from <strong>TV.Schedule@pamediagroup.com</strong> shared mailbox</li>
+              <li>Categorizes emails by TV supplier (BBC, ITV, Channel 4, etc.)</li>
+              <li>Filters by TV channel and programme type</li>
+              <li>Detects duplicate schedule updates</li>
+              <li>Provides analytics on TV schedule communications</li>
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
       id: 'getting-started',
-      title: 'Getting Started',
+      title: 'Getting Started with TV Schedule Emails',
       icon: Mail,
       content: (
         <div className="space-y-4">
           <p className="text-gray-600">
-            Welcome to your TV Schedule Email Dashboard! This application helps you manage and organize emails from various TV channels and suppliers efficiently.
+            Welcome to your TV Schedule Email Dashboard! This specialized application helps you manage and organize TV programme schedule emails from broadcasters and suppliers.
           </p>
           <div className="bg-blue-50 p-4 rounded-lg">
             <h4 className="font-semibold text-blue-900 mb-2">Quick Start:</h4>
             <ul className="list-disc list-inside text-blue-800 space-y-1">
-              <li>Use the <strong>Emails</strong> tab to view and manage your emails</li>
-              <li>Check the <strong>Dashboard</strong> tab for analytics and insights</li>
-              <li>Use the <strong>Export</strong> tab to download email data</li>
-              <li>Filter emails by supplier, channel, type, or date range</li>
+              <li>Use the <strong>Emails</strong> tab to view TV schedule emails</li>
+              <li>Check the <strong>Dashboard</strong> tab for TV schedule analytics</li>
+              <li>Use the <strong>Export</strong> tab to download schedule data</li>
+              <li>Filter by TV supplier, channel, programme type, or date range</li>
+            </ul>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-green-900 mb-2">📧 Shared Mailbox Access:</h4>
+            <ul className="list-disc list-inside text-green-800 space-y-1">
+              <li>Connected to: <strong>TV.Schedule@pamediagroup.com</strong></li>
+              <li>Requires delegate access permissions</li>
+              <li>Automatically opens Outlook web interface after login</li>
+              <li>Works alongside this dashboard for complete email management</li>
             </ul>
           </div>
         </div>
@@ -34,11 +72,11 @@ export default function HelpSection() {
     },
     {
       id: 'email-management',
-      title: 'Email Management',
+      title: 'TV Schedule Email Management',
       icon: Mail,
       content: (
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-900">Managing Your Emails</h4>
+          <h4 className="font-semibold text-gray-900">Managing Your TV Schedule Emails</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <h5 className="font-medium text-gray-900 mb-2 flex items-center">
@@ -46,10 +84,10 @@ export default function HelpSection() {
                 Viewing Emails
               </h5>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Click on any email row to view details</li>
-                <li>• Unread emails have a blue background</li>
-                <li>• Flagged emails show a red flag icon</li>
-                <li>• Sort emails by clicking column headers</li>
+                <li>• Click on any TV schedule email row to view details</li>
+                <li>• Unread schedule emails have a blue background</li>
+                <li>• Flagged schedule emails show a red flag icon</li>
+                <li>• Sort by date, channel, supplier, or programme type</li>
               </ul>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -58,9 +96,9 @@ export default function HelpSection() {
                 Email Actions
               </h5>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• <strong>View:</strong> Open email details</li>
-                <li>• <strong>Forward:</strong> Forward via default email app</li>
-                <li>• <strong>Archive:</strong> Move to archived emails</li>
+                <li>• <strong>View:</strong> Open TV schedule email details</li>
+                <li>• <strong>Forward:</strong> Forward schedule to team via email app</li>
+                <li>• <strong>Archive:</strong> Move schedule email to archived folder</li>
               </ul>
             </div>
           </div>
@@ -73,17 +111,17 @@ export default function HelpSection() {
       icon: Paperclip,
       content: (
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-900">Working with Attachments</h4>
+          <h4 className="font-semibold text-gray-900">Working with TV Schedule Attachments</h4>
           <div className="bg-green-50 p-4 rounded-lg">
             <h5 className="font-medium text-green-900 mb-2 flex items-center">
               <Download className="h-4 w-4 mr-2" />
               Downloading Attachments
             </h5>
             <ul className="text-green-800 space-y-2">
-              <li>• Click the download button next to any attachment name</li>
+              <li>• Click the download button next to any schedule attachment</li>
               <li>• File size is displayed in parentheses</li>
-              <li>• Attachments are downloaded to your default download folder</li>
-              <li>• Supported formats: PDF, DOC, XLS, images, and more</li>
+              <li>• Schedule files are downloaded to your default download folder</li>
+              <li>• Common formats: PDF schedules, XLS programme lists, XML data</li>
             </ul>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
@@ -103,7 +141,7 @@ export default function HelpSection() {
       icon: Search,
       content: (
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-900">Finding Emails Quickly</h4>
+          <h4 className="font-semibold text-gray-900">Finding TV Schedule Emails Quickly</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <h5 className="font-medium text-gray-900 mb-2 flex items-center">
@@ -111,10 +149,10 @@ export default function HelpSection() {
                 Search Function
               </h5>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Search in subject, sender, or email body</li>
+                <li>• Search schedule subjects, broadcaster names, or email content</li>
                 <li>• Use the search bar in the left sidebar</li>
                 <li>• Search is case-insensitive</li>
-                <li>• Results update in real-time</li>
+                <li>• Results update in real-time as you type</li>
               </ul>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -123,13 +161,13 @@ export default function HelpSection() {
                 Filter Options
               </h5>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>• <strong>Supplier:</strong> BBC, ITV, Channel 4, etc.</li>
-                <li>• <strong>Channel:</strong> Searchable dropdown for TV channels</li>
-                <li>• <strong>Type:</strong> Schedule, Update, Press, etc.</li>
+                <li>• <strong>TV Supplier:</strong> BBC, ITV, Channel 4, Sky, etc.</li>
+                <li>• <strong>TV Channel:</strong> Searchable dropdown for programme channels</li>
+                <li>• <strong>Programme Type:</strong> Schedule, Update, Press Release, etc.</li>
                 <li>• <strong>Time Range:</strong> Last 30 min, hour, 3h, 6h, 12h, 24h</li>
-                <li>• <strong>Date Range:</strong> Custom date filtering</li>
-                <li>• <strong>Attachments:</strong> Show only emails with files</li>
-                <li>• <strong>Duplicates:</strong> Show only duplicate emails</li>
+                <li>• <strong>Categories:</strong> TV Schedule, Drama, Sports, Films, etc.</li>
+                <li>• <strong>Has Attachments:</strong> Show only schedule emails with files</li>
+                <li>• <strong>Duplicates:</strong> Show only duplicate schedule emails</li>
               </ul>
             </div>
           </div>
@@ -413,19 +451,24 @@ export default function HelpSection() {
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Help & Documentation</h2>
+          <h2 className="text-xl font-semibold text-gray-900">📺 TV Schedule Email Dashboard Help</h2>
           <p className="text-gray-600 mt-1">
-            Learn how to use your TV Schedule Email Dashboard effectively
+            Learn how to use your specialized TV Schedule Email Dashboard effectively
           </p>
+          <div className="mt-2">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              ⚠️ TV Schedule Emails Only
+            </span>
+          </div>
         </div>
         
         <div className="p-6">
           <div className="mb-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 mb-2">Quick Navigation</h3>
+              <h3 className="font-medium text-blue-900 mb-2">📖 Quick Navigation</h3>
               <p className="text-blue-800 text-sm">
                 Click on any section below to expand detailed instructions and tips. 
-                Start with &quot;Getting Started&quot; if you&apos;re new to the dashboard.
+                Start with &quot;TV Schedule Dashboard Overview&quot; if you&apos;re new to the dashboard.
               </p>
             </div>
           </div>
@@ -440,8 +483,13 @@ export default function HelpSection() {
             <h3 className="font-medium text-gray-900 mb-2">Still Need Help?</h3>
             <p className="text-gray-600 text-sm">
               If you can&apos;t find what you&apos;re looking for in this help section, please contact your system administrator 
-              or IT support team for additional assistance.
+              or IT support team for additional assistance with the TV Schedule Email Dashboard.
             </p>
+            <div className="mt-3">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                📧 Remember: This tool only works with TV Schedule emails
+              </span>
+            </div>
           </div>
         </div>
       </div>

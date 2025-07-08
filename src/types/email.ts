@@ -51,4 +51,18 @@ export interface EmailStats {
   typeDistribution: Record<string, number>;
   attachmentCount: number;
   dailyVolume: { date: string; count: number }[];
+  weeklyVolume: { week: string; count: number }[];
+  monthlyVolume: { month: string; count: number }[];
+  peakTimes: { hour: number; count: number }[];
+  internalVsExternalRatio: { internal: number; external: number };
+  responseTimeAnalysis: {
+    avgResponseTime: number;
+    fastestResponse: number;
+    slowestResponse: number;
+  };
+  seasonalPatterns: {
+    quarter: string;
+    averageDaily: number;
+    trend: 'up' | 'down' | 'stable';
+  }[];
 }

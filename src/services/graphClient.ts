@@ -49,9 +49,13 @@ export class GraphService {
     mailboxId?: string;
   } = {}) {
     try {
+      // Default to shared mailbox if no mailboxId is specified
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const mailboxId = options.mailboxId || defaultMailboxId;
+      
       // Build the API endpoint based on mailbox
-      const endpoint = options.mailboxId && options.mailboxId !== 'me' 
-        ? `/users/${options.mailboxId}/messages`
+      const endpoint = mailboxId && mailboxId !== 'me' 
+        ? `/users/${mailboxId}/messages`
         : '/me/messages';
       
       let request = this.graphClient.api(endpoint);
@@ -88,10 +92,16 @@ export class GraphService {
     }
   }
 
-  async getMessageById(messageId: string) {
+  async getMessageById(messageId: string, mailboxId?: string) {
     try {
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const selectedMailboxId = mailboxId || defaultMailboxId;
+      const endpoint = selectedMailboxId && selectedMailboxId !== 'me' 
+        ? `/users/${selectedMailboxId}/messages/${messageId}`
+        : `/me/messages/${messageId}`;
+      
       const message = await this.graphClient
-        .api(`/me/messages/${messageId}`)
+        .api(endpoint)
         .get();
       return message;
     } catch (error) {
@@ -100,10 +110,16 @@ export class GraphService {
     }
   }
 
-  async getMessageAttachments(messageId: string) {
+  async getMessageAttachments(messageId: string, mailboxId?: string) {
     try {
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const selectedMailboxId = mailboxId || defaultMailboxId;
+      const endpoint = selectedMailboxId && selectedMailboxId !== 'me' 
+        ? `/users/${selectedMailboxId}/messages/${messageId}/attachments`
+        : `/me/messages/${messageId}/attachments`;
+      
       const attachments = await this.graphClient
-        .api(`/me/messages/${messageId}/attachments`)
+        .api(endpoint)
         .get();
       return attachments;
     } catch (error) {
@@ -112,10 +128,16 @@ export class GraphService {
     }
   }
 
-  async markMessageAsRead(messageId: string) {
+  async markMessageAsRead(messageId: string, mailboxId?: string) {
     try {
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const selectedMailboxId = mailboxId || defaultMailboxId;
+      const endpoint = selectedMailboxId && selectedMailboxId !== 'me' 
+        ? `/users/${selectedMailboxId}/messages/${messageId}`
+        : `/me/messages/${messageId}`;
+      
       await this.graphClient
-        .api(`/me/messages/${messageId}`)
+        .api(endpoint)
         .patch({
           isRead: true,
         });
@@ -125,10 +147,16 @@ export class GraphService {
     }
   }
 
-  async flagMessage(messageId: string, flagged: boolean = true) {
+  async flagMessage(messageId: string, flagged: boolean = true, mailboxId?: string) {
     try {
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const selectedMailboxId = mailboxId || defaultMailboxId;
+      const endpoint = selectedMailboxId && selectedMailboxId !== 'me' 
+        ? `/users/${selectedMailboxId}/messages/${messageId}`
+        : `/me/messages/${messageId}`;
+      
       await this.graphClient
-        .api(`/me/messages/${messageId}`)
+        .api(endpoint)
         .patch({
           flag: {
             flagStatus: flagged ? 'flagged' : 'notFlagged',
@@ -154,10 +182,16 @@ export class GraphService {
     }
   }
 
-  async assignCategoriesToMessage(messageId: string, categories: string[]) {
+  async assignCategoriesToMessage(messageId: string, categories: string[], mailboxId?: string) {
     try {
+      const defaultMailboxId = 'TV.Schedule@pamediagroup.com';
+      const selectedMailboxId = mailboxId || defaultMailboxId;
+      const endpoint = selectedMailboxId && selectedMailboxId !== 'me' 
+        ? `/users/${selectedMailboxId}/messages/${messageId}`
+        : `/me/messages/${messageId}`;
+      
       await this.graphClient
-        .api(`/me/messages/${messageId}`)
+        .api(endpoint)
         .patch({
           categories: categories,
         });

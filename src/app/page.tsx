@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { mockEmails } from '@/data/mockEmails';
-import { EmailFilter, SearchOptions } from '@/types/email';
+import { Email, EmailFilter, SearchOptions } from '@/types/email';
 import { calculateEmailStats, getUniqueChannels } from '@/utils/emailProcessor';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGraphEmails } from '@/hooks/useGraphEmails';
@@ -13,17 +13,18 @@ import Dashboard from '@/components/Dashboard';
 import ExportPanel from '@/components/ExportPanel';
 import HelpSection from '@/components/HelpSection';
 import LoginComponent from '@/components/LoginComponent';
-import MailboxSelector from '@/components/MailboxSelector';
-import { Mail, BarChart3, Download, Filter, HelpCircle, RefreshCw, LogOut, User, AlertCircle, LogIn } from 'lucide-react';
+import EmailPreviewPanel from '@/components/EmailPreviewPanel';
+import { Mail, BarChart3, Download, HelpCircle, RefreshCw, LogOut, User, AlertCircle, LogIn } from 'lucide-react';
 
 export default function Home() {
   const { isAuthenticated, user, logout, loading: authLoading } = useAuth();
   const [filters, setFilters] = useState<EmailFilter>({});
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({ query: '', fields: ['subject', 'from'] });
   const [activeTab, setActiveTab] = useState<'emails' | 'dashboard' | 'export' | 'help'>('emails');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen] = useState(false);
   const [useMockData, setUseMockData] = useState(false);
-  const [selectedMailbox, setSelectedMailbox] = useState('me');
+  const [selectedMailbox] = useState('TV.Schedule@pamediagroup.com');
+  const [previewEmail, setPreviewEmail] = useState<Email | null>(null);
 
   // Use Graph API or mock data based on authentication and user preference
   const { 
@@ -68,17 +69,21 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="relative mb-4">
+            <Mail className="h-12 w-12 text-blue-600 mx-auto" />
+            <div className="absolute inset-0 animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+          <p className="text-gray-600">Loading Dashboard...</p>
+          <p className="text-sm text-gray-500 mt-1">Connecting to shared mailbox</p>
         </div>
       </div>
     );
   }
 
   const tabs = [
-    { id: 'emails', label: 'Emails', icon: Mail, count: filteredEmails.length },
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'export', label: 'Export', icon: Download },
+    { id: 'emails', label: 'TV Schedule Emails', icon: Mail, count: filteredEmails.length },
+    { id: 'dashboard', label: 'Analytics', icon: BarChart3 },
+    { id: 'export', label: 'Export Data', icon: Download },
     { id: 'help', label: 'Help', icon: HelpCircle }
   ];
 
@@ -89,20 +94,25 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Email Dashboard</h1>
-              <p className="text-lg text-gray-600 mt-1">Manage your emails efficiently</p>
+              <div className="mb-2">
+                <h1 className="text-3xl font-bold text-gray-900">Mailbox Dashboard</h1>
+                <div className="flex items-center space-x-2 mt-1">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    📧 TV.Schedule@pamediagroup.com
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
                 {filteredEmails.length} of {emails.length} emails
               </div>
               
-              {/* Mailbox Selector - only show if authenticated */}
+              {/* TV Schedule Status */}
               {isAuthenticated && (
-                <MailboxSelector
-                  selectedMailbox={selectedMailbox}
-                  onMailboxChange={setSelectedMailbox}
-                />
+                <div className="text-sm text-green-600 font-medium">
+                  ✅ Connected to TV Schedule Mailbox
+                </div>
               )}
               
               {/* User info and controls */}
@@ -119,7 +129,7 @@ export default function Home() {
                   <button
                     onClick={refreshEmails}
                     disabled={graphLoading}
-                    className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50"
+                    className={`btn btn-ghost btn-sm p-2 ${graphLoading ? 'loading' : ''}`}
                     title="Refresh emails"
                   >
                     <RefreshCw className={`h-4 w-4 ${graphLoading ? 'animate-spin' : ''}`} />
@@ -129,21 +139,19 @@ export default function Home() {
                 {/* Demo Mode Toggle */}
                 <button
                   onClick={() => setUseMockData(!useMockData)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    useMockData 
-                      ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                  className={`btn btn-sm ${
+                    useMockData ? 'btn-primary' : 'btn-secondary'
                   }`}
-                  title={useMockData ? 'Currently viewing demo data' : 'Switch to demo mode'}
+                  title={useMockData ? 'Currently viewing sample TV schedule data' : 'Switch to demo mode'}
                 >
-                  {useMockData ? '🎯 Demo Mode' : '📊 Live Data'}
+                  {useMockData ? '🎯 TV Schedule Demo' : '📊 Live TV Schedule'}
                 </button>
                 
                 {/* Login/Logout button */}
                 {isAuthenticated ? (
                   <button
                     onClick={logout}
-                    className="p-2 rounded-md text-gray-400 hover:text-gray-500"
+                    className="btn btn-ghost btn-sm p-2"
                     title="Sign out"
                   >
                     <LogOut className="h-4 w-4" />
@@ -151,7 +159,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={() => setUseMockData(false)}
-                    className="px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800 hover:bg-green-200"
+                    className="btn btn-sm bg-green-100 text-green-800 hover:bg-green-200"
                     title="Sign in to access live data"
                   >
                     <LogIn className="h-4 w-4 inline mr-1" />
@@ -160,12 +168,6 @@ export default function Home() {
                 )}
               </div>
               
-              <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500"
-              >
-                <Filter className="h-5 w-5" />
-              </button>
             </div>
           </div>
         </div>
@@ -211,19 +213,13 @@ export default function Home() {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-blue-900">
-                    Demo Mode Active
+                    📺 TV Schedule Demo Mode Active
                   </p>
                   <p className="text-xs text-blue-700">
-                    Viewing realistic TV schedule email data for demonstration purposes
+                    Viewing sample TV schedule emails from BBC, ITV, Channel 4, and other broadcasters
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setUseMockData(false)}
-                className="text-blue-700 hover:text-blue-900 text-sm font-medium"
-              >
-                Switch to Live Data
-              </button>
             </div>
           </div>
         </div>
@@ -238,7 +234,11 @@ export default function Home() {
                 <AlertCircle className="h-5 w-5 text-red-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-red-800">{graphError}</p>
+                <p className="text-sm text-red-800 font-medium">TV Schedule Email Access Error</p>
+                <p className="text-sm text-red-700 mt-1">{graphError}</p>
+                <p className="text-xs text-red-600 mt-2">
+                  This dashboard only works with TV Schedule emails. Please ensure you have access to TV.Schedule@pamediagroup.com
+                </p>
               </div>
             </div>
           </div>
@@ -267,7 +267,8 @@ export default function Home() {
             {activeTab === 'emails' && (
               <EmailList
                 emails={filteredEmails}
-                onEmailClick={(email) => console.log('Email clicked:', email)}
+                onEmailClick={(email) => setPreviewEmail(email)}
+                loading={graphLoading}
               />
             )}
 
@@ -285,6 +286,24 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Email Preview Panel */}
+      <EmailPreviewPanel
+        email={previewEmail}
+        onClose={() => setPreviewEmail(null)}
+        onAction={(action, email) => {
+          console.log('Email action:', action, email);
+          // Handle actions like reply, forward, archive, delete
+          if (action === 'reply') {
+            // Open reply email
+            window.location.href = `mailto:${email.from}?subject=Re: ${email.subject}`;
+          } else if (action === 'forward') {
+            // Open forward email
+            window.location.href = `mailto:?subject=Fwd: ${email.subject}&body=${email.body || ''}`;
+          }
+          setPreviewEmail(null);
+        }}
+      />
     </div>
   );
 }

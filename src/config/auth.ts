@@ -40,7 +40,9 @@ export const loginRequest = {
   scopes: [
     'User.Read',
     'Mail.Read',
-    'Mail.ReadWrite'
+    'Mail.ReadWrite',
+    'Mail.Read.Shared',
+    'Mail.ReadWrite.Shared'
   ],
 };
 

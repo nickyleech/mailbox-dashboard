@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { EmailFilter } from '@/types/email';
-import { supplierConfig, typeConfig } from '@/data/mockEmails';
-import { Filter, X, Calendar, Paperclip, Clock, Copy } from 'lucide-react';
+import { supplierConfig } from '@/data/mockEmails';
+import { Filter, X, Paperclip, Clock, Copy, Star, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import SearchableDropdown from './SearchableDropdown';
 import GroupedChannelDropdown from './GroupedChannelDropdown';
 
@@ -23,6 +23,11 @@ export default function FilterPanel({
   onToggle 
 }: FilterPanelProps) {
   const [localFilters, setLocalFilters] = useState<EmailFilter>(filters);
+  const [favouriteChannels, setFavouriteChannels] = useState<string[]>([
+    'BBC One', 'BBC Two', 'ITV', 'Channel 4', 'Channel 5'
+  ]);
+  const [showFavouriteChannels, setShowFavouriteChannels] = useState(false);
+  const [newFavouriteChannel, setNewFavouriteChannel] = useState('');
 
   const handleFilterChange = (key: keyof EmailFilter, value: string | boolean | { start: string; end: string } | string[] | undefined) => {
     const newFilters = { ...localFilters, [key]: value };
@@ -34,6 +39,24 @@ export default function FilterPanel({
     const emptyFilters: EmailFilter = {};
     setLocalFilters(emptyFilters);
     onFiltersChange(emptyFilters);
+  };
+
+  const addFavouriteChannel = () => {
+    if (newFavouriteChannel.trim() && !favouriteChannels.includes(newFavouriteChannel.trim())) {
+      setFavouriteChannels([...favouriteChannels, newFavouriteChannel.trim()]);
+      setNewFavouriteChannel('');
+    }
+  };
+
+  const removeFavouriteChannel = (channel: string) => {
+    setFavouriteChannels(favouriteChannels.filter(c => c !== channel));
+  };
+
+  const moveFavouriteChannel = (fromIndex: number, toIndex: number) => {
+    const newFavourites = [...favouriteChannels];
+    const [movedChannel] = newFavourites.splice(fromIndex, 1);
+    newFavourites.splice(toIndex, 0, movedChannel);
+    setFavouriteChannels(newFavourites);
   };
 
   const activeFilterCount = Object.values(filters).filter(value => 
@@ -70,22 +93,24 @@ export default function FilterPanel({
 
       {isOpen && (
         <div className="px-6 py-4 space-y-6">
-          {/* Supplier Filter */}
+          {/* Time Range Filter - Move to top */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Supplier
+              <Clock className="inline h-4 w-4 mr-1" />
+              Time Range
             </label>
             <select
-              value={localFilters.supplier || ''}
-              onChange={(e) => handleFilterChange('supplier', e.target.value || undefined)}
+              value={localFilters.timeFilter || ''}
+              onChange={(e) => handleFilterChange('timeFilter', e.target.value || undefined)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="">All suppliers</option>
-              {Object.keys(supplierConfig).map((supplier) => (
-                <option key={supplier} value={supplier}>
-                  {supplier}
-                </option>
-              ))}
+              <option value="">All time</option>
+              <option value="last30min">Last 30 minutes</option>
+              <option value="last1hour">Last 1 hour</option>
+              <option value="last3hours">Last 3 hours</option>
+              <option value="last6hours">Last 6 hours</option>
+              <option value="last12hours">Last 12 hours</option>
+              <option value="last24hours">Last 24 hours</option>
             </select>
           </div>
 
@@ -116,106 +141,94 @@ export default function FilterPanel({
             )}
           </div>
 
-          {/* Type Filter */}
+          {/* Favourite Channels */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Type
-            </label>
-            <select
-              value={localFilters.type || ''}
-              onChange={(e) => handleFilterChange('type', e.target.value || undefined)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All types</option>
-              {Object.entries(typeConfig).map(([key, config]) => (
-                <option key={key} value={key}>
-                  {config.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Time Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock className="inline h-4 w-4 mr-1" />
-              Time Range
-            </label>
-            <select
-              value={localFilters.timeFilter || ''}
-              onChange={(e) => handleFilterChange('timeFilter', e.target.value || undefined)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All time</option>
-              <option value="last30min">Last 30 minutes</option>
-              <option value="last1hour">Last 1 hour</option>
-              <option value="last3hours">Last 3 hours</option>
-              <option value="last6hours">Last 6 hours</option>
-              <option value="last12hours">Last 12 hours</option>
-              <option value="last24hours">Last 24 hours</option>
-            </select>
-          </div>
-
-          {/* Attachments Filter */}
-          <div>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={localFilters.hasAttachments === true}
-                onChange={(e) => handleFilterChange('hasAttachments', e.target.checked || undefined)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <Paperclip className="h-4 w-4 text-gray-400" />
-              <span className="text-sm text-gray-700">Has attachments only</span>
-            </label>
-          </div>
-
-          {/* Duplicates Filter */}
-          <div>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={localFilters.showDuplicatesOnly === true}
-                onChange={(e) => handleFilterChange('showDuplicatesOnly', e.target.checked || undefined)}
-                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-              />
-              <Copy className="h-4 w-4 text-orange-400" />
-              <span className="text-sm text-gray-700">Show duplicates only</span>
-            </label>
-          </div>
-
-          {/* Date Range Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="inline h-4 w-4 mr-1" />
-              Date Range
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">From</label>
-                <input
-                  type="date"
-                  value={localFilters.dateRange?.start || ''}
-                  onChange={(e) => handleFilterChange('dateRange', {
-                    start: e.target.value,
-                    end: localFilters.dateRange?.end || ''
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">To</label>
-                <input
-                  type="date"
-                  value={localFilters.dateRange?.end || ''}
-                  onChange={(e) => handleFilterChange('dateRange', {
-                    start: localFilters.dateRange?.start || '',
-                    end: e.target.value
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                <Star className="inline h-4 w-4 mr-1 text-yellow-500" />
+                Favourite Channels
+              </label>
+              <button
+                onClick={() => setShowFavouriteChannels(!showFavouriteChannels)}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                {showFavouriteChannels ? 'Hide' : 'Show'}
+              </button>
             </div>
+            
+            {showFavouriteChannels && (
+              <div className="space-y-2">
+                {/* Quick access buttons for favourite channels */}
+                <div className="flex flex-wrap gap-2">
+                  {favouriteChannels.map((channel) => (
+                    <button
+                      key={channel}
+                      onClick={() => handleFilterChange('channel', channel)}
+                      className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                        localFilters.channel === channel
+                          ? 'bg-blue-100 border-blue-500 text-blue-700'
+                          : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {channel}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Add new favourite channel */}
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={newFavouriteChannel}
+                    onChange={(e) => setNewFavouriteChannel(e.target.value)}
+                    placeholder="Add favourite channel"
+                    className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    onKeyPress={(e) => e.key === 'Enter' && addFavouriteChannel()}
+                  />
+                  <button
+                    onClick={addFavouriteChannel}
+                    className="px-2 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                {/* Manage favourite channels */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide">Manage Favourites</h4>
+                  {favouriteChannels.map((channel, index) => (
+                    <div key={channel} className="flex items-center space-x-2 p-2 bg-gray-50 rounded-md">
+                      <span className="flex-1 text-sm text-gray-700">{channel}</span>
+                      <div className="flex space-x-1">
+                        <button
+                          onClick={() => moveFavouriteChannel(index, Math.max(0, index - 1))}
+                          disabled={index === 0}
+                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                          title="Move up"
+                        >
+                          <ChevronUp className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => moveFavouriteChannel(index, Math.min(favouriteChannels.length - 1, index + 1))}
+                          disabled={index === favouriteChannels.length - 1}
+                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                          title="Move down"
+                        >
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => removeFavouriteChannel(channel)}
+                          className="p-1 text-red-400 hover:text-red-600"
+                          title="Remove"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Categories Filter */}
@@ -224,7 +237,7 @@ export default function FilterPanel({
               Categories
             </label>
             <div className="space-y-2">
-              {['TV Schedule', 'Schedule Update', 'Press Release', 'Technical', 'Marketing', 'Sports', 'Drama', 'Reality', 'Films'].map((category) => (
+              {['TV Schedule', 'Update', 'Press Release', 'Other'].map((category) => (
                 <label key={category} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -242,6 +255,53 @@ export default function FilterPanel({
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Attachments Filter - Reworded */}
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={localFilters.hasAttachments === true}
+                onChange={(e) => handleFilterChange('hasAttachments', e.target.checked || undefined)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <Paperclip className="h-4 w-4 text-gray-400" />
+              <span className="text-sm text-gray-700">Has attachments</span>
+            </label>
+          </div>
+
+          {/* Duplicates Filter */}
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={localFilters.showDuplicatesOnly === true}
+                onChange={(e) => handleFilterChange('showDuplicatesOnly', e.target.checked || undefined)}
+                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+              />
+              <Copy className="h-4 w-4 text-orange-400" />
+              <span className="text-sm text-gray-700">Show Duplicates</span>
+            </label>
+          </div>
+
+          {/* Supplier Filter - Move to bottom */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Supplier
+            </label>
+            <select
+              value={localFilters.supplier || ''}
+              onChange={(e) => handleFilterChange('supplier', e.target.value || undefined)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All suppliers</option>
+              {Object.keys(supplierConfig).map((supplier) => (
+                <option key={supplier} value={supplier}>
+                  {supplier}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       )}
