@@ -482,7 +482,7 @@ export function identifyChannel(subject: string, supplier: string): string {
 }
 
 // Identify email type from subject and body
-export function identifyEmailType(subject: string): 'schedule' | 'update' | 'press' | 'technical' | 'marketing' {
+export function identifyEmailType(subject: string): 'TV Schedule' | 'Update' | 'Press Release' | 'Other' {
   const lowerSubject = subject.toLowerCase();
   // const lowerBody = bodyPreview?.toLowerCase() || ''; // Removed unused variable
   
@@ -491,7 +491,7 @@ export function identifyEmailType(subject: string): 'schedule' | 'update' | 'pre
       lowerSubject.includes('urgent') || lowerSubject.includes('last minute') ||
       lowerSubject.includes('amendment') || lowerSubject.includes('billing updated') || 
       lowerSubject.includes('final')) {
-    return 'update';
+    return 'Update';
   }
   
   // Technical indicators
@@ -499,14 +499,14 @@ export function identifyEmailType(subject: string): 'schedule' | 'update' | 'pre
       lowerSubject.includes('broadcast') || lowerSubject.includes('transmission') ||
       lowerSubject.includes('epg') || lowerSubject.includes('sent') || 
       lowerSubject.includes('to tasc')) {
-    return 'technical';
+    return 'Other';
   }
   
   // Press indicators
   if (lowerSubject.includes('press') || lowerSubject.includes('news') || 
       lowerSubject.includes('announcement') || lowerSubject.includes('release') ||
       lowerSubject.includes('programme information')) {
-    return 'press';
+    return 'Press Release';
   }
   
   // Schedule indicators (includes weekly schedules)
@@ -517,15 +517,15 @@ export function identifyEmailType(subject: string): 'schedule' | 'update' | 'pre
       lowerSubject.includes('monday') || lowerSubject.includes('tuesday') || 
       lowerSubject.includes('wednesday') || lowerSubject.includes('thursday') || 
       lowerSubject.includes('friday') || lowerSubject.includes('re:')) {
-    return 'schedule';
+    return 'TV Schedule';
   }
   
   // Marketing indicators
   if (lowerSubject.includes('marketing') || lowerSubject.includes('promo') || 
       lowerSubject.includes('trailer') || lowerSubject.includes('campaign')) {
-    return 'marketing';
+    return 'Other';
   }
   
-  // Default to schedule for most TV-related emails
-  return 'schedule';
+  // Default to TV Schedule for most TV-related emails
+  return 'TV Schedule';
 }

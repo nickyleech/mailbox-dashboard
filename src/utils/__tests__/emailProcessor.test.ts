@@ -36,7 +36,7 @@ const mockEmails: Email[] = [
     from: 'schedules@bbc.co.uk',
     supplier: 'BBC',
     channel: 'BBC One',
-    type: 'schedule',
+    type: 'TV Schedule',
     hasAttachments: true,
     receivedDateTime: '2024-01-01T10:30:00Z',
     categories: ['urgent'],
@@ -50,7 +50,7 @@ const mockEmails: Email[] = [
     from: 'schedules@bbc.co.uk',
     supplier: 'BBC',
     channel: 'BBC One',
-    type: 'schedule',
+    type: 'TV Schedule',
     hasAttachments: false,
     receivedDateTime: '2024-01-01T11:00:00Z',
     categories: ['urgent'],
@@ -64,7 +64,7 @@ const mockEmails: Email[] = [
     from: 'news@itv.com',
     supplier: 'ITV',
     channel: 'ITV1',
-    type: 'update',
+    type: 'Update',
     hasAttachments: false,
     receivedDateTime: '2024-01-02T14:45:00Z',
     categories: ['news'],
@@ -78,7 +78,7 @@ const mockEmails: Email[] = [
     from: 'content@sky.com',
     supplier: 'Sky',
     channel: 'Sky Sports',
-    type: 'schedule',
+    type: 'TV Schedule',
     hasAttachments: true,
     receivedDateTime: '2024-01-03T09:15:00Z',
     categories: ['sports'],
@@ -156,11 +156,11 @@ describe('emailProcessor', () => {
     })
 
     it('should filter by type', () => {
-      const filter: EmailFilter = { type: 'update' }
+      const filter: EmailFilter = { type: 'Update' }
       const result = filterEmails(mockEmails, filter)
       
       expect(result).toHaveLength(1)
-      expect(result[0].type).toBe('update')
+      expect(result[0].type).toBe('Update')
     })
 
     it('should filter by attachments', () => {
@@ -436,30 +436,30 @@ describe('emailProcessor', () => {
 
   describe('identifyEmailType', () => {
     it('should identify update emails', () => {
-      expect(identifyEmailType('Schedule Update')).toBe('update')
-      expect(identifyEmailType('Urgent Change')).toBe('update')
-      expect(identifyEmailType('Last Minute Amendment')).toBe('update')
-      expect(identifyEmailType('Final Billing Updated')).toBe('update')
+      expect(identifyEmailType('Schedule Update')).toBe('Update')
+      expect(identifyEmailType('Urgent Change')).toBe('Update')
+      expect(identifyEmailType('Last Minute Amendment')).toBe('Update')
+      expect(identifyEmailType('Final Billing Updated')).toBe('Update')
     })
 
     it('should identify technical emails', () => {
-      expect(identifyEmailType('Technical Specification')).toBe('technical')
-      expect(identifyEmailType('Broadcast Information')).toBe('technical')
-      expect(identifyEmailType('EPG Data')).toBe('technical')
-      expect(identifyEmailType('Sent to TASC')).toBe('technical')
+      expect(identifyEmailType('Technical Specification')).toBe('Other')
+      expect(identifyEmailType('Broadcast Information')).toBe('Other')
+      expect(identifyEmailType('EPG Data')).toBe('Other')
+      expect(identifyEmailType('Sent to TASC')).toBe('Other')
     })
 
     it('should identify press emails', () => {
-      expect(identifyEmailType('Press Release')).toBe('press')
-      expect(identifyEmailType('News Announcement')).toBe('press')
-      expect(identifyEmailType('Programme Information')).toBe('press')
+      expect(identifyEmailType('Press Release')).toBe('Press Release')
+      expect(identifyEmailType('News Announcement')).toBe('Press Release')
+      expect(identifyEmailType('Programme Information')).toBe('Press Release')
     })
 
     it('should identify schedule emails', () => {
-      expect(identifyEmailType('Weekly Schedule')).toBe('schedule')
-      expect(identifyEmailType('TV Guide')).toBe('schedule')
-      expect(identifyEmailType('Monday Programme')).toBe('schedule')
-      expect(identifyEmailType('Re: Schedule')).toBe('schedule')
+      expect(identifyEmailType('Weekly Schedule')).toBe('TV Schedule')
+      expect(identifyEmailType('TV Guide')).toBe('TV Schedule')
+      expect(identifyEmailType('Monday Programme')).toBe('TV Schedule')
+      expect(identifyEmailType('Re: Schedule')).toBe('TV Schedule')
     })
 
     it('should identify marketing emails', () => {
@@ -469,7 +469,7 @@ describe('emailProcessor', () => {
     })
 
     it('should default to schedule for unknown types', () => {
-      expect(identifyEmailType('Random Subject')).toBe('schedule')
+      expect(identifyEmailType('Random Subject')).toBe('TV Schedule')
     })
   })
 

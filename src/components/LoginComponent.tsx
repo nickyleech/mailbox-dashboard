@@ -133,7 +133,7 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
             </p>
           </div>
           <p className="mt-2 text-xs text-gray-500 max-w-sm mx-auto">
-            Your credentials are handled securely by Microsoft's authentication service.
+            Your credentials are handled securely by Microsoft&apos;s authentication service.
           </p>
         </div>
       </div>

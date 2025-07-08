@@ -57,10 +57,10 @@ export default function EmailPreviewPanel({ email, onClose, onAction }: EmailPre
                 </h2>
               </div>
               <span className={`badge ${
-                email.type === 'schedule' ? 'badge-primary' :
-                email.type === 'update' ? 'badge-warning' :
-                email.type === 'press' ? 'badge-success' :
-                email.type === 'technical' ? 'badge-error' :
+                email.type === 'TV Schedule' ? 'badge-primary' :
+                email.type === 'Update' ? 'badge-warning' :
+                email.type === 'Press Release' ? 'badge-success' :
+                email.type === 'Other' ? 'badge-error' :
                 'badge-gray'
               }`}>
                 {email.type}
