@@ -22,6 +22,7 @@ interface UseGraphEmailsOptions {
   pageSize?: number;
   autoRefresh?: boolean;
   refreshInterval?: number;
+  mailboxId?: string;
 }
 
 export const useGraphEmails = (options: UseGraphEmailsOptions = {}): UseGraphEmailsResult => {
@@ -37,7 +38,8 @@ export const useGraphEmails = (options: UseGraphEmailsOptions = {}): UseGraphEma
     searchOptions = { query: '', fields: ['subject', 'from'], exact: false },
     pageSize = 50,
     autoRefresh = false,
-    refreshInterval = 30000 // 30 seconds
+    refreshInterval = 30000, // 30 seconds
+    mailboxId = 'me'
   } = options;
 
   const fetchEmails = useCallback(async (skip: number = 0, append: boolean = false) => {
@@ -61,7 +63,8 @@ export const useGraphEmails = (options: UseGraphEmailsOptions = {}): UseGraphEma
           'flag',
           'bodyPreview'
         ],
-        orderBy: 'receivedDateTime desc'
+        orderBy: 'receivedDateTime desc',
+        mailboxId: mailboxId
       });
 
       const transformedEmails = response.value.map(transformGraphMessage);
@@ -82,7 +85,7 @@ export const useGraphEmails = (options: UseGraphEmailsOptions = {}): UseGraphEma
     } finally {
       setLoading(false);
     }
-  }, [graphService, isAuthenticated, pageSize]);
+  }, [graphService, isAuthenticated, pageSize, mailboxId]);
 
   const refreshEmails = useCallback(async () => {
     await fetchEmails(0, false);
@@ -110,12 +113,13 @@ export const useGraphEmails = (options: UseGraphEmailsOptions = {}): UseGraphEma
     return result;
   }, [emails, filters, searchOptions]);
 
-  // Initial fetch
+  // Initial fetch and refetch when mailbox changes
   useEffect(() => {
     if (isAuthenticated && graphService) {
+      setEmails([]); // Clear existing emails when switching mailboxes
       fetchEmails();
     }
-  }, [isAuthenticated, graphService, fetchEmails]);
+  }, [isAuthenticated, graphService, fetchEmails, mailboxId]);
 
   // Auto-refresh
   useEffect(() => {

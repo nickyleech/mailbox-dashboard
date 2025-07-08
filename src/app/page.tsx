@@ -13,6 +13,7 @@ import Dashboard from '@/components/Dashboard';
 import ExportPanel from '@/components/ExportPanel';
 import HelpSection from '@/components/HelpSection';
 import LoginComponent from '@/components/LoginComponent';
+import MailboxSelector from '@/components/MailboxSelector';
 import { Mail, BarChart3, Download, Filter, HelpCircle, RefreshCw, LogOut, User, AlertCircle } from 'lucide-react';
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'emails' | 'dashboard' | 'export' | 'help'>('emails');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [useMockData, setUseMockData] = useState(false);
+  const [selectedMailbox, setSelectedMailbox] = useState('me');
 
   // Use Graph API or mock data based on authentication and user preference
   const { 
@@ -34,7 +36,8 @@ export default function Home() {
     filters,
     searchOptions,
     pageSize: 100,
-    autoRefresh: true
+    autoRefresh: true,
+    mailboxId: selectedMailbox
   });
 
   // Fallback to mock data if needed
@@ -92,6 +95,12 @@ export default function Home() {
               <div className="text-sm text-gray-500">
                 {filteredEmails.length} of {emails.length} emails
               </div>
+              
+              {/* Mailbox Selector */}
+              <MailboxSelector
+                selectedMailbox={selectedMailbox}
+                onMailboxChange={setSelectedMailbox}
+              />
               
               {/* User info and controls */}
               <div className="flex items-center space-x-2">

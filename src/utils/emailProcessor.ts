@@ -1,4 +1,4 @@
-import { Email, EmailFilter, SearchOptions, EmailStats, EmailAttachment } from '@/types/email';
+import { Email, EmailFilter, SearchOptions, EmailStats, Attachment } from '@/types/email';
 import { supplierConfig } from '@/data/mockEmails';
 
 // Function to detect duplicates and mark them
@@ -251,7 +251,9 @@ export function formatDate(dateString: string): string {
 // Transform Microsoft Graph API message to our Email format
 export function transformGraphMessage(graphMessage: unknown): Email {
   const message = graphMessage as Record<string, unknown>;
-  const from = (message.from as Record<string, unknown>)?.emailAddress?.address as string || '';
+  const fromObj = message.from as Record<string, unknown> | undefined;
+  const emailAddress = fromObj?.emailAddress as Record<string, unknown> | undefined;
+  const from = emailAddress?.address as string || '';
   const supplier = identifySupplier(from);
   const channel = identifyChannel(message.subject as string, supplier);
   const type = identifyEmailType(message.subject as string);
@@ -275,7 +277,7 @@ export function transformGraphMessage(graphMessage: unknown): Email {
 }
 
 // Transform Graph API attachments to our format
-export function transformAttachments(graphAttachments: unknown[]): EmailAttachment[] {
+export function transformAttachments(graphAttachments: unknown[]): Attachment[] {
   const attachments = graphAttachments as Record<string, unknown>[];
   return attachments.map(attachment => ({
     id: attachment.id as string,

@@ -46,9 +46,15 @@ export class GraphService {
     filter?: string;
     select?: string[];
     orderBy?: string;
+    mailboxId?: string;
   } = {}) {
     try {
-      let request = this.graphClient.api('/me/messages');
+      // Build the API endpoint based on mailbox
+      const endpoint = options.mailboxId && options.mailboxId !== 'me' 
+        ? `/users/${options.mailboxId}/messages`
+        : '/me/messages';
+      
+      let request = this.graphClient.api(endpoint);
 
       if (options.top) {
         request = request.top(options.top);
@@ -157,6 +163,50 @@ export class GraphService {
         });
     } catch (error) {
       console.error('Error assigning categories:', error);
+      throw error;
+    }
+  }
+
+  async getSharedMailboxes() {
+    try {
+      // Alternative approach: Get mailboxes from organization
+      const orgResponse = await this.graphClient
+        .api('/users')
+        .filter('userType eq \'Member\' and accountEnabled eq true')
+        .select(['id', 'displayName', 'userPrincipalName', 'userType'])
+        .get();
+      
+      // Filter for mailboxes the user has access to
+      const accessibleMailboxes = [];
+      for (const user of orgResponse.value) {
+        try {
+          // Test access by trying to get mailbox settings
+          await this.graphClient
+            .api(`/users/${user.id}/mailboxSettings`)
+            .get();
+          accessibleMailboxes.push(user);
+        } catch {
+          // User doesn't have access to this mailbox
+        }
+      }
+      
+      return accessibleMailboxes;
+    } catch (error) {
+      console.error('Error getting shared mailboxes:', error);
+      throw error;
+    }
+  }
+
+  async getDelegatedMailboxes() {
+    try {
+      // Get mailboxes where the user has delegate permissions
+      const response = await this.graphClient
+        .api('/me/mailboxSettings/delegatesMeetingMessageDeliveryOptions')
+        .get();
+      
+      return response.value || [];
+    } catch (error) {
+      console.error('Error getting delegated mailboxes:', error);
       throw error;
     }
   }
