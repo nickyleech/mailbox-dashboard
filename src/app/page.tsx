@@ -73,6 +73,11 @@ export default function Home() {
   const emailStats = useMemo(() => calculateEmailStats(filteredEmails), [filteredEmails]);
   const availableChannels = useMemo(() => getUniqueChannels(emails), [emails]);
 
+  const handleResetSearch = () => {
+    setSearchOptions({ query: '', fields: ['subject', 'from'] });
+    setFilters({});
+  };
+
   // Show login component if not authenticated and not using demo mode
   if (!isAuthenticated && !authLoading && !useMockData) {
     return <LoginComponent onDemoMode={() => setUseMockData(true)} />;
@@ -276,6 +281,7 @@ export default function Home() {
                 emails={filteredEmails}
                 onEmailClick={(email) => setPreviewEmail(email)}
                 loading={graphLoading}
+                onResetSearch={handleResetSearch}
               />
             )}
 

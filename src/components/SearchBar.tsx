@@ -49,6 +49,11 @@ export default function SearchBar({ onSearch, placeholder = "Search emails..." }
     onSearch({ query: '', fields: searchFields, exact: exactMatch });
   };
 
+  const resetSearch = () => {
+    setQuery('');
+    onSearch({ query: '', fields: ['subject', 'from'], exact: false });
+  };
+
   const toggleSearchField = (field: 'subject' | 'from' | 'body') => {
     setSearchFields(prev => 
       prev.includes(field) 
@@ -148,10 +153,18 @@ export default function SearchBar({ onSearch, placeholder = "Search emails..." }
         {/* Recent Searches */}
         {recentSearches.length > 0 && !isAdvancedOpen && (
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <History className="inline h-4 w-4 mr-1" />
-              Recent searches
-            </label>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                <History className="inline h-4 w-4 mr-1" />
+                Recent searches
+              </label>
+              <button
+                onClick={resetSearch}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Show all emails
+              </button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {recentSearches.map((search, index) => (
                 <button

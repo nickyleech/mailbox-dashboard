@@ -9,6 +9,7 @@ interface EmailListProps {
   emails: Email[];
   onEmailClick?: (email: Email) => void;
   loading?: boolean;
+  onResetSearch?: () => void;
 }
 
 type ColumnKey = 'received' | 'channel' | 'type' | 'subject' | 'from' | 'attachments';
@@ -20,7 +21,7 @@ interface Column {
   visible: boolean;
 }
 
-export default function EmailList({ emails, onEmailClick, loading = false }: EmailListProps) {
+export default function EmailList({ emails, onEmailClick, loading = false, onResetSearch }: EmailListProps) {
   const [sortField, setSortField] = useState<SortField>('receivedDateTime');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
@@ -360,6 +361,14 @@ ${email.body || 'Email content not available'}
           <p className="mt-1 text-sm text-gray-500">
             Try adjusting your search criteria or filters.
           </p>
+          {onResetSearch && (
+            <button
+              onClick={onResetSearch}
+              className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Show all emails
+            </button>
+          )}
         </div>
       )}
       
