@@ -63,18 +63,6 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
     }
   ];
 
-  const hourlyBreakdown = Array.from({ length: 24 }, (_, hour) => {
-    const count = outOfHoursEmails.filter(email => {
-      const emailHour = new Date(email.receivedDateTime).getHours();
-      return emailHour === hour;
-    }).length;
-    
-    return {
-      hour: hour.toString().padStart(2, '0') + ':00',
-      count,
-      isOutOfHours: isOutOfHours(`2024-01-01T${hour.toString().padStart(2, '0')}:00:00`)
-    };
-  });
 
   const dailyVolumeData = stats.dailyVolume.map(item => ({
     date: new Date(item.date).toLocaleDateString('en-GB', { 
