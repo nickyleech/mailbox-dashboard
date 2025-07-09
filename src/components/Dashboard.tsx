@@ -39,6 +39,17 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
   const outOfHoursEmails = emails.filter(email => isOutOfHours(email.receivedDateTime));
   const businessHoursEmails = emails.filter(email => !isOutOfHours(email.receivedDateTime));
 
+  // Calculate supplier email counts
+  const supplierCounts = emails.reduce((acc, email) => {
+    acc[email.supplier] = (acc[email.supplier] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const supplierData = Object.entries(supplierCounts)
+    .map(([supplier, count]) => ({ supplier, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10); // Top 10 suppliers
+
   const outOfHoursData = [
     {
       name: 'Business Hours',
@@ -288,13 +299,6 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">Out of Hours Email Analysis</h3>
               <div className="flex items-center space-x-2">
-                <select className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="all">All Channels</option>
-                  <option value="bbc">BBC</option>
-                  <option value="itv">ITV</option>
-                  <option value="channel4">Channel 4</option>
-                  <option value="channel5">Channel 5</option>
-                </select>
                 <button
                   onClick={() => setShowTimeSettings(!showTimeSettings)}
                   className="btn btn-ghost btn-sm p-2"
@@ -413,17 +417,17 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
           </div>
         </div>
 
-        {/* Hourly Breakdown */}
+        {/* Supplier Email Distribution */}
         <div className="card">
           <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Hourly Email Distribution</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Supplier Email Distribution</h3>
           </div>
           <div className="card-content">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={hourlyBreakdown}>
+              <BarChart data={supplierData} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="hour" />
-                <YAxis />
+                <XAxis type="number" />
+                <YAxis dataKey="supplier" type="category" width={100} />
                 <Tooltip />
                 <Bar 
                   dataKey="count" 
