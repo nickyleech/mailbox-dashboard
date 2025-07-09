@@ -41,7 +41,9 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
 
   // Calculate supplier email counts
   const supplierCounts = emails.reduce((acc, email) => {
-    acc[email.supplier] = (acc[email.supplier] || 0) + 1;
+    if (email.supplier) {
+      acc[email.supplier] = (acc[email.supplier] || 0) + 1;
+    }
     return acc;
   }, {} as Record<string, number>);
 
@@ -411,18 +413,32 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
             <h3 className="text-lg font-semibold text-gray-900">Supplier Email Distribution</h3>
           </div>
           <div className="card-content">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={supplierData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="supplier" type="category" width={100} />
-                <Tooltip />
-                <Bar 
-                  dataKey="count" 
-                  fill="#3B82F6"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {supplierData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart 
+                  data={supplierData} 
+                  layout="horizontal"
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis dataKey="supplier" type="category" width={80} />
+                  <Tooltip 
+                    formatter={(value) => [value, 'Emails']}
+                    labelFormatter={(label) => `Supplier: ${label}`}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="#3B82F6"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">No supplier data available</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -510,13 +526,6 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900">Duplicates Analysis</h3>
             <div className="flex items-center space-x-2">
-              <select className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="all">All Channels</option>
-                <option value="bbc">BBC</option>
-                <option value="itv">ITV</option>
-                <option value="channel4">Channel 4</option>
-                <option value="channel5">Channel 5</option>
-              </select>
               <button
                 onClick={() => setShowDuplicatesDetails(!showDuplicatesDetails)}
                 className="flex items-center space-x-1 text-gray-500 hover:text-gray-700"
