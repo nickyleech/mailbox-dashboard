@@ -65,7 +65,6 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
     }
   ];
 
-
   const dailyVolumeData = stats.dailyVolume.map(item => ({
     date: new Date(item.date).toLocaleDateString('en-GB', { 
       weekday: 'short', 
