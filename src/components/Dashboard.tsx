@@ -413,26 +413,29 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
           </div>
           <div className="card-content">
             {supplierData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart 
-                  data={supplierData} 
-                  layout="horizontal"
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="supplier" type="category" width={80} />
-                  <Tooltip 
-                    formatter={(value) => [value, 'Emails']}
-                    labelFormatter={(label) => `Supplier: ${label}`}
-                  />
-                  <Bar 
-                    dataKey="count" 
-                    fill="#3B82F6"
-                    radius={[0, 4, 4, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {supplierData.map((supplier, index) => (
+                  <div key={supplier.supplier} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          {index + 1}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{supplier.supplier}</p>
+                        <p className="text-xs text-gray-500">
+                          {((supplier.count / emails.length) * 100).toFixed(1)}% of total emails
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-gray-900">{supplier.count}</p>
+                      <p className="text-xs text-gray-500">emails</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-500">No supplier data available</p>
