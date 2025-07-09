@@ -12,6 +12,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ emails, stats }: DashboardProps) {
+  // Dashboard component for email analytics and reporting
   const [outOfHoursStart, setOutOfHoursStart] = useState('17:00');
   const [outOfHoursEnd, setOutOfHoursEnd] = useState('07:00');
   const [showTimeSettings, setShowTimeSettings] = useState(false);
