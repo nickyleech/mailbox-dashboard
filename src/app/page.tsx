@@ -111,11 +111,6 @@ export default function Home() {
               <div className="mb-2">
                 <h1 className="text-3xl font-bold text-gray-900">Email Dashboard</h1>
                 <p className="text-lg text-gray-600 mt-1">TV Schedule Mailbox</p>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-900 border border-gray-300">
-                    Shared Mailbox
-                  </span>
-                </div>
               </div>
             </div>
             <div className="flex items-center space-x-4">
