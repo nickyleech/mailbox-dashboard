@@ -19,11 +19,8 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-900 shadow-lg mb-6">
-            <div className="w-8 h-8 bg-white rounded"></div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Mailbox Dashboard
+            Email Dashboard
           </h1>
           <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-900 shadow-sm border border-gray-300">
             TV.Schedule@pamediagroup.com
@@ -65,20 +62,6 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-300">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-900 shadow-lg mb-4">
-                  <div className="h-6 w-6 bg-white rounded"></div>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Shared Mailbox Access
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Connect to the dedicated TV Schedule shared mailbox
-                </p>
-              </div>
-            </div>
-
 
             <div className="space-y-4">
               <button
@@ -123,17 +106,6 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
           </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 border border-gray-300 shadow-sm">
-            <div className="h-4 w-4 bg-gray-900 rounded-full mr-2"></div>
-            <p className="text-xs text-gray-600 font-medium">
-              Secured by Microsoft 365 Authentication
-            </p>
-          </div>
-          <p className="mt-2 text-xs text-gray-500 max-w-sm mx-auto">
-            Your credentials are handled securely by Microsoft&apos;s authentication service.
-          </p>
-        </div>
       </div>
     </div>
   );
