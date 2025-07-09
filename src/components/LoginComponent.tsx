@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, Shield, Users, Play } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 interface LoginComponentProps {
   onDemoMode?: () => void;
@@ -16,23 +16,23 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg mb-6">
-            <span className="text-2xl">📧</span>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-900 shadow-lg mb-6">
+            <div className="w-8 h-8 bg-white rounded"></div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Mailbox Dashboard
           </h1>
-          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 shadow-sm">
-            📧 TV.Schedule@pamediagroup.com
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-900 shadow-sm border border-gray-300">
+            TV.Schedule@pamediagroup.com
           </div>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white/80 backdrop-blur-sm py-8 px-4 shadow-xl border border-white/20 sm:rounded-2xl sm:px-10">
+        <div className="bg-white py-8 px-4 shadow-xl border border-gray-300 sm:rounded-2xl sm:px-10">
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
               <div className="flex">
@@ -47,28 +47,28 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
           )}
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-4 shadow-sm">
+            <div className="bg-gray-50 border border-gray-300 rounded-xl p-4 shadow-sm">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                    <Shield className="h-4 w-4 text-amber-600" />
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
+                    <div className="h-4 w-4 bg-gray-900 rounded-full"></div>
                   </div>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-semibold text-amber-900">
+                  <h3 className="text-sm font-semibold text-gray-900">
                     TV Schedule Emails Only
                   </h3>
-                  <p className="mt-1 text-sm text-amber-800">
+                  <p className="mt-1 text-sm text-gray-800">
                     This application is for TV Schedule emails only, it will not work with personal emails.
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-300">
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg mb-4">
-                  <Users className="h-6 w-6 text-white" />
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-900 shadow-lg mb-4">
+                  <div className="h-6 w-6 bg-white rounded"></div>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Shared Mailbox Access
@@ -84,7 +84,7 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+                className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-semibold rounded-xl text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -93,7 +93,6 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <LogIn className="h-5 w-5 mr-3" />
                     Sign in with Microsoft
                   </div>
                 )}
@@ -113,11 +112,10 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
               {onDemoMode && (
                 <button
                   onClick={onDemoMode}
-                  className="w-full flex justify-center py-3 px-4 border border-blue-200 text-sm font-semibold rounded-xl text-blue-700 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm hover:shadow-md transform hover:scale-[1.02] transition-all duration-200"
+                  className="w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-semibold rounded-xl text-gray-900 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-sm hover:shadow-md transform hover:scale-[1.02] transition-all duration-200"
                 >
                   <div className="flex items-center">
-                    <Play className="h-5 w-5 mr-3" />
-                    🎯 Try Demo Mode
+                    Try Demo Mode
                   </div>
                 </button>
               )}
@@ -126,8 +124,8 @@ export default function LoginComponent({ onDemoMode }: LoginComponentProps) {
         </div>
 
         <div className="mt-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-            <Shield className="h-4 w-4 text-gray-500 mr-2" />
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 border border-gray-300 shadow-sm">
+            <div className="h-4 w-4 bg-gray-900 rounded-full mr-2"></div>
             <p className="text-xs text-gray-600 font-medium">
               Secured by Microsoft 365 Authentication
             </p>

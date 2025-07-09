@@ -372,26 +372,38 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
 
             {showOutOfHoursDetails && (
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Detailed Breakdown</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Channels That Arrived Out of Hours</h4>
                 <div className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-gray-700">Peak Out of Hours</p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {outOfHoursEmails.length > 0 ? 
-                          new Date(Math.max(...outOfHoursEmails.map(e => new Date(e.receivedDateTime).getTime()))).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-                          : 'N/A'
-                        }
-                      </p>
+                  {outOfHoursEmails.length > 0 ? (
+                    <div className="max-h-60 overflow-y-auto">
+                      <div className="space-y-2">
+                        {outOfHoursEmails.map((email, index) => (
+                          <div key={index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{email.channel}</p>
+                                <p className="text-xs text-gray-600">{email.supplier}</p>
+                                <p className="text-xs text-gray-500 mt-1">{email.subject}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs font-medium text-gray-900">
+                                  {new Date(email.receivedDateTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(email.receivedDateTime).toLocaleDateString('en-GB')}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-gray-700">Avg per Day</p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {(outOfHoursEmails.length / 7).toFixed(1)}
-                      </p>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-gray-500">No emails received out of hours</p>
                     </div>
-                  </div>
-                  <div className="text-xs text-gray-500">
+                  )}
+                  <div className="text-xs text-gray-500 mt-3">
                     Analysis based on current time settings: {outOfHoursStart} - {outOfHoursEnd}
                   </div>
                 </div>
@@ -547,29 +559,58 @@ export default function Dashboard({ emails, stats }: DashboardProps) {
 
           {showDuplicatesDetails && (
             <div className="mt-6 pt-6 border-t border-gray-200">
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">Duplicate Detection Details</h4>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Duplicate Emails List</h4>
               <div className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700">Reply Chains</p>
-                    <p className="text-lg font-bold text-gray-900">
-                      {emails.filter(email => email.subject.startsWith('Re:')).length}
-                    </p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700">Forward Chains</p>
-                    <p className="text-lg font-bold text-gray-900">
-                      {emails.filter(email => email.subject.includes('Fwd:') || email.subject.includes('FWD:')).length}
-                    </p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700">Auto-Detected</p>
-                    <p className="text-lg font-bold text-gray-900">
-                      {emails.filter(email => email.isDuplicate).length}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500">
+                {(() => {
+                  const duplicateEmails = emails.filter(email => 
+                    email.isDuplicate || 
+                    email.subject.startsWith('Re:') || 
+                    email.subject.includes('Fwd:') || 
+                    email.subject.includes('FWD:')
+                  );
+                  
+                  return duplicateEmails.length > 0 ? (
+                    <div className="max-h-60 overflow-y-auto">
+                      <div className="space-y-2">
+                        {duplicateEmails.map((email, index) => (
+                          <div key={index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">{email.subject}</p>
+                                <p className="text-xs text-gray-600 mt-1">{email.from}</p>
+                                <p className="text-xs text-gray-500">{email.channel} • {email.supplier}</p>
+                              </div>
+                              <div className="text-right ml-4">
+                                <p className="text-xs font-medium text-gray-900">
+                                  {new Date(email.receivedDateTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(email.receivedDateTime).toLocaleDateString('en-GB')}
+                                </p>
+                                <div className="flex items-center space-x-1 mt-1">
+                                  {email.isDuplicate && (
+                                    <span className="text-xs bg-red-100 text-red-800 px-1 py-0.5 rounded">Auto-Detected</span>
+                                  )}
+                                  {email.subject.startsWith('Re:') && (
+                                    <span className="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded">Reply</span>
+                                  )}
+                                  {(email.subject.includes('Fwd:') || email.subject.includes('FWD:')) && (
+                                    <span className="text-xs bg-green-100 text-green-800 px-1 py-0.5 rounded">Forward</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-gray-500">No duplicate emails detected</p>
+                    </div>
+                  );
+                })()}
+                <div className="text-xs text-gray-500 mt-3">
                   Duplicates are detected based on subject similarity and sender patterns. Use the &ldquo;Show Duplicates&rdquo; filter to view them.
                 </div>
               </div>
