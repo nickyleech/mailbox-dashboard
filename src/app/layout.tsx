@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mailbox Dashboard - TV Channel Email Management",
+  title: "Email Dashboard - TV Schedule Mailbox",
   description: "Manage TV channel emails from BBC, ITV, Channel 4, Sky and more with advanced filtering and categorization",
 };
 

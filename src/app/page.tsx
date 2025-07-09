@@ -109,7 +109,8 @@ export default function Home() {
           <div className="flex justify-between items-center py-6">
             <div>
               <div className="mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">Mailbox Dashboard</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Email Dashboard</h1>
+                <p className="text-lg text-gray-600 mt-1">TV Schedule Mailbox</p>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-900 border border-gray-300">
                     Shared Mailbox
