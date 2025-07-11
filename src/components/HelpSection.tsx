@@ -20,7 +20,7 @@ export default function HelpSection() {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-center mb-2">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
-              <h4 className="font-semibold text-yellow-900">⚠️ TV Schedule Emails Only</h4>
+              <h4 className="font-semibold text-yellow-900">TV Schedule Emails Only</h4>
             </div>
             <p className="text-yellow-800 text-sm">
               This application is specifically designed for managing TV programme schedule emails from broadcasters and suppliers. 
@@ -28,7 +28,7 @@ export default function HelpSection() {
             </p>
           </div>
           <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">📺 What This Dashboard Does:</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">What This Dashboard Does:</h4>
             <ul className="list-disc list-inside text-blue-800 space-y-1">
               <li>Manages emails from the shared mailbox</li>
               <li>Categorizes emails by TV supplier (BBC, ITV, Channel 4, etc.)</li>
@@ -59,7 +59,7 @@ export default function HelpSection() {
             </ul>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-green-900 mb-2">📧 Shared Mailbox Access:</h4>
+            <h4 className="font-semibold text-green-900 mb-2">Shared Mailbox Access:</h4>
             <ul className="list-disc list-inside text-green-800 space-y-1">
               <li>Connected to the shared mailbox</li>
               <li>Requires delegate access permissions</li>
@@ -451,13 +451,13 @@ export default function HelpSection() {
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">📺 TV Schedule Email Dashboard Help</h2>
+          <h2 className="text-xl font-semibold text-gray-900">TV Schedule Email Dashboard Help</h2>
           <p className="text-gray-600 mt-1">
             Learn how to use your specialized TV Schedule Email Dashboard effectively
           </p>
           <div className="mt-2">
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-              ⚠️ TV Schedule Emails Only
+              TV Schedule Emails Only
             </span>
           </div>
         </div>
@@ -465,7 +465,7 @@ export default function HelpSection() {
         <div className="p-6">
           <div className="mb-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 mb-2">📖 Quick Navigation</h3>
+              <h3 className="font-medium text-blue-900 mb-2">Quick Navigation</h3>
               <p className="text-blue-800 text-sm">
                 Click on any section below to expand detailed instructions and tips. 
                 Start with &quot;TV Schedule Dashboard Overview&quot; if you&apos;re new to the dashboard.
@@ -487,7 +487,7 @@ export default function HelpSection() {
             </p>
             <div className="mt-3">
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                📧 Remember: This tool only works with TV Schedule emails
+                Remember: This tool only works with TV Schedule emails
               </span>
             </div>
           </div>

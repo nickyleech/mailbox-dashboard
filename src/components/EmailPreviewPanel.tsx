@@ -1,7 +1,7 @@
 'use client';
 
 import { Email } from '@/types/email';
-import { X, Calendar, User, Paperclip, Flag, Download, Forward, Reply, Archive, Trash2 } from 'lucide-react';
+import { X, Calendar, User, Paperclip, Flag, Download, Forward, Reply } from 'lucide-react';
 
 interface EmailPreviewPanelProps {
   email: Email | null;
@@ -189,22 +189,6 @@ export default function EmailPreviewPanel({ email, onClose, onAction }: EmailPre
               >
                 <Forward className="h-4 w-4" />
                 <span>Forward</span>
-              </button>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => handleAction('archive')}
-                className="btn btn-ghost flex items-center space-x-2"
-              >
-                <Archive className="h-4 w-4" />
-                <span>Archive</span>
-              </button>
-              <button
-                onClick={() => handleAction('delete')}
-                className="btn btn-ghost text-red-600 hover:text-red-700 flex items-center space-x-2"
-              >
-                <Trash2 className="h-4 w-4" />
-                <span>Delete</span>
               </button>
             </div>
           </div>
